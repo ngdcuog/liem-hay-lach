@@ -12,13 +12,17 @@
 /* ===== Design tokens: "Bàn điều tra" ===== */
 :root{
   --desk-0:#120e0b; --desk-1:#1c1611; --desk-2:#2a2119; --desk-line:#3d3125;
-  --paper:#f1e6c9; --paper-2:#e4d3a9; --paper-edge:#c9b285; --ink:#1f1a14; --ink-2:#5a4f40;
-  --brass:#d9a441; --brass-2:#9c7020; --cream:#f6efe0; --muted:#bcae94;
+  --paper:#f1e6c9; --paper-2:#e4d3a9; --paper-edge:#c9b285;
+  --brass:#d9a441; --brass-2:#9c7020; --cream:#f6efe0;
   --stamp-red:#c2352c; --stamp-green:#2e7d4f;
   --tag-a:#c4463a; --tag-b:#2f6fb7; --tag-c:#c98d1f; --tag-d:#3b8a58;
   --f-ui:"Be Vietnam Pro","Segoe UI",Roboto,Arial,sans-serif;
   --f-doc:"Noto Serif",Georgia,"Times New Roman",serif;
   --f-mono:"Roboto Mono",Consolas,"Courier New",monospace;
+}
+.folder, .tag, .hmain .note, .pinnote{
+  --ink:#1f1a14;
+  --ink-2:#5a4f40;
 }
 #app{height:100vh;display:grid;grid-template-rows:auto 1fr auto}
 #bar{display:flex;align-items:center;gap:14px;padding:10px 24px;border-bottom:1px solid var(--line);background:rgba(8,10,24,.6)}
@@ -143,33 +147,33 @@ body.desk.low .seal{background:radial-gradient(circle at 35% 30%,#f08070,var(--s
 
 /* Thẻ tang vật (đáp án) */
 .tags{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.4vh,16px) clamp(14px,2.2vw,28px);padding:0 6px}
-.tag{position:relative;display:flex;align-items:stretch;min-height:clamp(52px,8.4vh,84px);background:linear-gradient(180deg,#fbf3df,var(--paper));color:var(--ink);border-radius:6px;transform:rotate(var(--r,0deg));box-shadow:0 5px 14px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.07);transition:filter .25s, opacity .25s, transform .25s}
-.tag .band{flex:none;width:clamp(42px,min(5.4vw,8vh),72px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;border-radius:6px 0 0 6px;position:relative}
-.tag .band .shape{font-size:clamp(18px,min(2vw,3vh),28px);line-height:1}
-.tag .band .letter{font-family:var(--f-mono);font-weight:700;font-size:clamp(11px,1.5vh,15px);opacity:.9}
-.tag .band .hole{position:absolute;top:clamp(5px,.7vh,8px);width:clamp(7px,.9vh,12px);height:clamp(7px,.9vh,12px);border-radius:50%;background:var(--desk-1);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.tags .tag{position:relative;display:flex;align-items:stretch;min-height:clamp(52px,8.4vh,84px);background:linear-gradient(180deg,#fbf3df,var(--paper));color:var(--ink);border-radius:6px;transform:rotate(var(--r,0deg));box-shadow:0 5px 14px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.07);transition:filter .25s, opacity .25s, transform .25s}
+.tags .tag .band{flex:none;width:clamp(42px,min(5.4vw,8vh),72px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;border-radius:6px 0 0 6px;position:relative}
+.tags .tag .band .shape{font-size:clamp(18px,min(2vw,3vh),28px);line-height:1}
+.tags .tag .band .letter{font-family:var(--f-mono);font-weight:700;font-size:clamp(11px,1.5vh,15px);opacity:.9}
+.tags .tag .band .hole{position:absolute;top:clamp(5px,.7vh,8px);width:clamp(7px,.9vh,12px);height:clamp(7px,.9vh,12px);border-radius:50%;background:var(--desk-1);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
 .t0 .band{background:var(--tag-a)} .t1 .band{background:var(--tag-b)} .t2 .band{background:var(--tag-c)} .t3 .band{background:var(--tag-d)}
-.tag .txt{flex:1;display:flex;align-items:center;padding:clamp(6px,1vh,12px) clamp(12px,1.5vw,20px);font-weight:700;font-size:clamp(15px,min(1.6vw,2.7vh),26px);line-height:1.25}
-.tag .pin{position:absolute;top:clamp(-7px,-.8vh,-5px);left:50%;width:clamp(12px,1.4vh,18px);height:clamp(12px,1.4vh,18px);border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 30%,#ff9a8a,#b8261c 60%,#6e130d);box-shadow:0 2px 4px rgba(0,0,0,.5)}
-.tag .votes{display:none}
-.tag .verdict{display:none}
+.tags .tag .txt{flex:1;display:flex;align-items:center;padding:clamp(6px,1vh,12px) clamp(12px,1.5vw,20px);font-weight:700;font-size:clamp(15px,min(1.6vw,2.7vh),26px);line-height:1.25;color:var(--ink)}
+.tags .tag .pin{position:absolute;top:clamp(-7px,-.8vh,-5px);left:50%;width:clamp(12px,1.4vh,18px);height:clamp(12px,1.4vh,18px);border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 30%,#ff9a8a,#b8261c 60%,#6e130d);box-shadow:0 2px 4px rgba(0,0,0,.5)}
+.tags .tag .votes{display:none}
+.tags .tag .verdict{display:none}
 
 /* Trạng thái CÔNG BỐ ĐÁP ÁN (reveal) */
 body.desk.revealed .fuse{display:none}
 body.desk.revealed .seal{background:radial-gradient(circle at 35% 30%,#7fd3a0,var(--stamp-green) 55%,#16472c);color:#fff;font-size:clamp(10px,1.4vh,14px);letter-spacing:.05em}
-body.desk.revealed .tag:not(.ok){filter:grayscale(.9) brightness(.8);opacity:.55}
-body.desk.revealed .tag.ok{transform:rotate(0deg) scale(1.03);box-shadow:0 0 0 clamp(2px,.3vw,4px) var(--stamp-green),0 clamp(6px,.8vh,14px) clamp(16px,2vh,30px) rgba(0,0,0,.6)}
-body.desk.revealed .tag .votes{display:flex;position:absolute;left:clamp(42px,min(5.4vw,8vh),72px);right:0;bottom:0;height:clamp(16px,2.2vh,24px);align-items:center;gap:6px;padding:0 clamp(10px,1.4vw,18px);font-family:var(--f-mono);font-size:clamp(10px,1.3vh,13px);color:var(--ink-2);white-space:nowrap}
-body.desk.revealed .tag .votes i{display:block;height:clamp(4px,.5vh,6px);border-radius:99px;background:currentColor;opacity:.55}
-body.desk.revealed .tag .txt{padding-bottom:clamp(18px,2.6vh,28px)}
-body.desk.revealed .tag.ok .verdict{display:block;position:absolute;right:clamp(10px,1.4vw,20px);top:clamp(-16px,-1.8vh,-10px);font-weight:900;font-size:clamp(15px,min(1.5vw,2.5vh),22px);letter-spacing:.12em;color:var(--stamp-green);border:clamp(2px,.3vw,4px) solid var(--stamp-green);border-radius:6px;padding:2px clamp(8px,1vw,14px);background:rgba(241,230,201,.95);transform:rotate(-8deg);animation:stampIn .38s cubic-bezier(.2,1.4,.4,1) .25s both}
+body.desk.revealed .tags .tag:not(.ok){filter:grayscale(.9) brightness(.8);opacity:.55}
+body.desk.revealed .tags .tag.ok{transform:rotate(0deg) scale(1.03);box-shadow:0 0 0 clamp(2px,.3vw,4px) var(--stamp-green),0 clamp(6px,.8vh,14px) clamp(16px,2vh,30px) rgba(0,0,0,.6)}
+body.desk.revealed .tags .tag .votes{display:flex;position:absolute;left:clamp(42px,min(5.4vw,8vh),72px);right:0;bottom:0;height:clamp(16px,2.2vh,24px);align-items:center;gap:6px;padding:0 clamp(10px,1.4vw,18px);font-family:var(--f-mono);font-size:clamp(10px,1.3vh,13px);color:var(--ink-2);white-space:nowrap}
+body.desk.revealed .tags .tag .votes i{display:block;height:clamp(4px,.5vh,6px);border-radius:99px;background:currentColor;opacity:.55}
+body.desk.revealed .tags .tag .txt{padding-bottom:clamp(18px,2.6vh,28px)}
+body.desk.revealed .tags .tag.ok .verdict{display:block;position:absolute;right:clamp(10px,1.4vw,20px);top:clamp(-16px,-1.8vh,-10px);font-weight:900;font-size:clamp(15px,min(1.5vw,2.5vh),22px);letter-spacing:.12em;color:var(--stamp-green);border:clamp(2px,.3vw,4px) solid var(--stamp-green);border-radius:6px;padding:2px clamp(8px,1vw,14px);background:rgba(241,230,201,.95);transform:rotate(-8deg);animation:stampIn .38s cubic-bezier(.2,1.4,.4,1) .25s both}
 @keyframes stampIn{from{transform:rotate(-18deg) scale(2.1);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
 
 /* Biên bản kết luận */
-.note{display:none;background:var(--cream);color:var(--ink);border-left:clamp(5px,.6vw,8px) solid var(--stamp-red);border-radius:6px;padding:clamp(8px,1.2vh,14px) clamp(14px,1.8vw,22px);font-size:clamp(13px,min(1.4vw,2.2vh),18px);line-height:1.35;box-shadow:0 clamp(4px,.5vh,8px) clamp(10px,1.5vh,20px) rgba(0,0,0,.45);transform:rotate(.25deg)}
-.note h4{margin:0 0 3px;font-family:var(--f-mono);font-size:clamp(11px,1.4vh,15px);letter-spacing:.16em;color:var(--stamp-red)}
-.note small{display:block;margin-top:3px;font-family:var(--f-mono);font-size:clamp(10px,1.2vh,13px);color:var(--ink-2)}
-body.desk.revealed .note{display:block;animation:slideUp .35s ease-out .55s both}
+.hmain .note{display:none;background:var(--cream);color:var(--ink);border-left:clamp(5px,.6vw,8px) solid var(--stamp-red);border-radius:6px;padding:clamp(8px,1.2vh,14px) clamp(14px,1.8vw,22px);font-size:clamp(13px,min(1.4vw,2.2vh),18px);line-height:1.35;box-shadow:0 clamp(4px,.5vh,8px) clamp(10px,1.5vh,20px) rgba(0,0,0,.45);transform:rotate(.25deg)}
+.hmain .note h4{margin:0 0 3px;font-family:var(--f-mono);font-size:clamp(11px,1.4vh,15px);letter-spacing:.16em;color:var(--stamp-red)}
+.hmain .note small{display:block;margin-top:3px;font-family:var(--f-mono);font-size:clamp(10px,1.2vh,13px);color:var(--ink-2)}
+body.desk.revealed .hmain .note{display:block;animation:slideUp .35s ease-out .55s both}
 @keyframes slideUp{from{transform:translateY(10px) rotate(.25deg);opacity:0}to{transform:translateY(0) rotate(.25deg);opacity:1}}
 
 /* Bảng tin (pinnote) */
@@ -181,7 +185,7 @@ body.desk.revealed .note{display:block;animation:slideUp .35s ease-out .55s both
 
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important;transition:none !important}
-  .tag,.folder,.note,.pinnote{transform:none !important}
+  .tag,.folder,.hmain .note,.pinnote{transform:none !important}
   .seal{animation:none !important}
 }
 /* backdoor / inspection */
