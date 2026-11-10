@@ -16,9 +16,10 @@ html,body{margin:0;height:100%;background:#0b0d19;color:#f6f4ef;font-family:"Seg
 </style>
 </head>
 <body>
-<!-- Diễn tập: màn hình MC bên trái, 4 "điện thoại" bên phải, chung một máy, không cần mạng. -->
+<!-- Diễn tập: màn hình MC bên trái, 4 "điện thoại" bên phải, chung một máy.
+     Mặc định chạy không cần mạng (mode=local). Thêm ?mode=firebase để thử qua Firebase thật. -->
 <div class="wrap">
-  <iframe class="host" id="host" src="host.html?mode=local&room=TEST&auto=1" title="Màn hình MC"></iframe>
+  <iframe class="host" id="host" title="Màn hình MC"></iframe>
   <div class="phones">
     <div class="ph"><span>Điện thoại 1</span><iframe id="p1" title="Điện thoại 1"></iframe></div>
     <div class="ph"><span>Điện thoại 2</span><iframe id="p2" title="Điện thoại 2"></iframe></div>
@@ -27,11 +28,15 @@ html,body{margin:0;height:100%;background:#0b0d19;color:#f6f4ef;font-family:"Seg
   </div>
 </div>
 <script>
-// Xóa danh tính cũ của các "điện thoại" để mỗi lần diễn tập vào phòng lại từ đầu, rồi nạp sau khi màn hình MC tạo phòng.
-for (let k = 1; k <= 4; k++) localStorage.removeItem("lhl-me-TEST-" + k);
+const q = new URLSearchParams(location.search);
+const mode = q.get("mode") === "firebase" ? "firebase" : "local";
+const room = mode === "firebase" ? "T" + Math.random().toString(36).slice(2, 6).toUpperCase() : "TEST";
+const NAMES = ["Minh", "Lan", "Huy", "Mai"];
+for (let k = 1; k <= 4; k++) localStorage.removeItem("lhl-me-" + room + "-" + k);
+document.getElementById("host").src = "host.html?mode=" + mode + "&room=" + room + "&auto=1&debug=1";
 setTimeout(() => {
-  for (let k = 1; k <= 4; k++) document.getElementById("p" + k).src = "index.html?mode=local&room=TEST&slot=" + k + "&name=" + encodeURIComponent("Nhóm " + k);
-}, 1200);
+  for (let k = 1; k <= 4; k++) document.getElementById("p" + k).src = "index.html?mode=" + mode + "&room=" + room + "&slot=" + k + "&name=" + encodeURIComponent(NAMES[k - 1]);
+}, 1500);
 </script>
 </body>
 </html>

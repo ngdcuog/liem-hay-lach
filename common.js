@@ -4,16 +4,17 @@
 
   // Luật chơi: chỉnh số ở đây nếu muốn cân bằng lại.
   const CONFIG = {
-    startScore: 300,          // điểm vốn mỗi đội khi vào phòng
+    startScore: 300,          // điểm vốn mỗi người chơi khi vào phòng
     basePoints: 100,          // trả lời đúng
     speedBonus: 50,           // thưởng trả lời nhanh (tối đa)
     questionTime: 20,         // giây cho mỗi câu
     backdoorTime: 12,         // giây mở "cửa sau"
-    trustPerBribe: 7,         // mỗi phong bì làm niềm tin của lớp giảm
-    trustPerCatch: 3,         // mỗi phong bì bị phát hiện giúp niềm tin hồi lại
+    trustBribeK: 25,          // niềm tin mất mỗi phong bì = K / số người chơi (cả lớp càng đông, mỗi phong bì càng ít ảnh hưởng)
+    trustCatchK: 10,          // niềm tin hồi lại mỗi vụ bị xử lý = K / số người chơi
+    reportCap: 3,             // mỗi người bị tố giác đúng chỉ thưởng cho 3 người tố đầu tiên
     trustLimit: 50,           // dưới mức này khi hết game: mọi đội bị trừ
     trustPenaltyRate: 0.2,    // trừ 20% điểm
-    cleanBonus: 100,          // thưởng "Đội liêm chính" (không đưa phong bì nào)
+    cleanBonus: 100,          // thưởng "Liêm chính" (không đưa phong bì nào)
     reportReward: [100, 200], // tố giác đúng: màn 1, màn 2
     reportFalsePenalty: 50,   // tố giác sai
     detectRate: [0.3, 0.6],   // xác suất thanh tra phát hiện: màn 1, màn 2
@@ -23,12 +24,12 @@
   };
 
   const PERKS = {
-    lode: { name: "Lộ đề", price: 50, desc: "Câu tới chỉ còn 2 đáp án trên điện thoại của đội" },
+    lode: { name: "Lộ đề", price: 50, desc: "Câu tới chỉ còn 2 đáp án trên điện thoại của bạn" },
     chay: { name: "Chạy điểm", price: 80, desc: "Câu tới được nhân đôi điểm" },
     xoa:  { name: "Xóa án", price: 70, desc: "Câu sai gần nhất được tính là đúng (+100)" }
   };
 
-  const ROOM_PATHS = ["state", "board", "teams", "answers", "bribes", "results", "private", "reports"];
+  const ROOM_PATHS = ["state", "board", "players", "answers", "bribes", "results", "private", "reports"];
 
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const uid = (n = 8) => { const a = "abcdefghijkmnpqrstuvwxyz23456789"; let s = ""; const r = crypto.getRandomValues(new Uint8Array(n)); for (const x of r) s += a[x % a.length]; return s; };

@@ -7,32 +7,29 @@
 <link rel="stylesheet" href="common.css">
 <style>
 #app{height:100vh;display:grid;grid-template-rows:auto 1fr auto}
-#bar{display:flex;align-items:center;gap:16px;padding:10px 24px;border-bottom:1px solid var(--line);background:rgba(8,10,24,.6)}
+#bar{display:flex;align-items:center;gap:14px;padding:10px 24px;border-bottom:1px solid var(--line);background:rgba(8,10,24,.6)}
 .brand{font-weight:900;font-size:22px;letter-spacing:.04em;white-space:nowrap}
 .brand i{font-weight:500;color:var(--gold)}
 #barInfo{display:flex;gap:8px;flex:1;flex-wrap:nowrap;overflow:hidden;min-width:0}
 .chip{border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-size:14px;color:var(--muted);white-space:nowrap}
-#bar .trust .tbar{width:110px}
-#bar .trust{font-size:14px}
 .chip b{color:var(--ink)}
 .chip.act2{border-color:var(--red);color:#ffb3b5}
 .chip.off{border-color:var(--red);color:var(--red)}
+#bar .trust .tbar{width:110px}
+#bar .trust{font-size:14px}
 .tools{display:flex;gap:8px}
-.tools button{background:transparent;border:1px solid var(--line);border-radius:10px;padding:6px 12px;cursor:pointer;color:var(--muted);font-size:13px}
+.tools button{background:transparent;border:1px solid var(--line);border-radius:10px;padding:6px 12px;cursor:pointer;color:var(--muted);font-size:13px;white-space:nowrap}
 .tools button:hover{border-color:var(--gold);color:var(--ink)}
+.tools button.danger:hover{border-color:var(--red);color:#ffb3b5}
 #main{overflow:auto;padding:clamp(12px,2.4vh,30px) clamp(16px,3vw,48px);display:flex;flex-direction:column;gap:clamp(10px,2vh,20px)}
 #main>:first-child{margin-top:auto}
 #main>:last-child{margin-bottom:auto}
 #board{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding:10px 20px 14px;border-top:1px solid var(--line);background:rgba(8,10,24,.7)}
 #board:empty{display:none}
-.tm{min-width:118px;background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:6px 12px;text-align:center}
-.tm .n{font-size:14px;color:var(--muted);font-weight:700;white-space:nowrap}
-.tm .s{font-size:24px;font-weight:900;line-height:1.1}
-.tm .d{font-size:13px;font-weight:800;min-height:1.15em}
-.tm .d.up{color:var(--green)} .tm .d.no{color:var(--red)}
-.tm.click{cursor:pointer}
-.tm.click:hover{border-color:var(--gold)}
-.tm.on{border-color:var(--green);background:rgba(48,164,108,.18)}
+.tp{min-width:130px;max-width:210px;background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:6px 12px;text-align:center}
+.tp .n{font-size:14px;color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tp .s{font-size:24px;font-weight:900;line-height:1.1}
+.tp.cnt{background:transparent;border-style:dashed;min-width:100px}
 /* setup */
 .setup{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;max-width:1200px;width:100%;margin-inline:auto}
 @media(max-width:900px){.setup{grid-template-columns:1fr}}
@@ -50,7 +47,7 @@
 .note{font-size:13px;color:var(--muted)}
 .note a{color:var(--gold)}
 /* lobby */
-.lobby{display:grid;grid-template-columns:minmax(260px,400px) 1fr;gap:24px;align-items:start;max-width:1200px;width:100%;margin-inline:auto}
+.lobby{display:grid;grid-template-columns:minmax(260px,380px) 1fr;gap:24px;align-items:start;max-width:1200px;width:100%;margin-inline:auto}
 @media(max-width:900px){.lobby{grid-template-columns:1fr}}
 .join{background:#fff;color:#141629;border-radius:var(--radius);padding:18px;text-align:center}
 .join .code{font-size:clamp(46px,9vh,84px);font-weight:900;letter-spacing:.14em;line-height:1}
@@ -59,17 +56,15 @@
 .url{font-size:13px;word-break:break-all;color:#4b4f6b}
 .side{display:grid;gap:12px}
 .side h2{margin:0;font-size:22px}
-.teams{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}
-.teams span{background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-weight:800;animation:pop .35s}
-.teams span.kick{cursor:pointer}
-.teams span.kick:hover{border-color:var(--red)}
+.side h2 b{color:var(--gold)}
+#plist{display:flex;flex-wrap:wrap;gap:6px;min-height:40px;max-height:clamp(70px,20vh,170px);overflow:auto;align-content:flex-start}
+#plist span{background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:4px 12px;font-weight:700;font-size:15px;animation:pop .35s;cursor:pointer}
+#plist span:hover{border-color:var(--red)}
 @keyframes pop{from{transform:scale(.6);opacity:0}}
-.rules{margin:0;padding-left:1.1em;display:grid;gap:4px;font-size:clamp(14px,2.2vh,17px)}
+.rules{margin:0;padding-left:1.1em;display:grid;gap:4px;font-size:clamp(14px,2.1vh,17px)}
 table.pk{border-collapse:collapse;width:100%;font-size:15px}
-table.pk td{padding:6px 8px;border-bottom:1px solid var(--line)}
+table.pk td{padding:5px 8px;border-bottom:1px solid var(--line)}
 table.pk td:nth-child(2){color:var(--gold);font-weight:800;white-space:nowrap}
-.mteams{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.mteams input,.card select,.inrow select{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink);width:100%}
 /* question */
 .qtop{display:flex;align-items:center;gap:12px}
 .qn{font-weight:900;font-size:20px}
@@ -85,66 +80,63 @@ table.pk td:nth-child(2){color:var(--gold);font-weight:800;white-space:nowrap}
 .timer.big{width:clamp(90px,16vh,140px)}
 .qtext{background:#fff;color:#141629;border-radius:var(--radius);padding:clamp(12px,2.6vh,28px) clamp(16px,2.4vw,36px);font-size:clamp(20px,min(2.5vw,4.4vh),42px);font-weight:800;line-height:1.25;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.35)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.6vh,16px)}
-.op{display:flex;align-items:center;gap:14px;border-radius:14px;padding:clamp(8px,1.8vh,20px) 18px;min-height:clamp(56px,10.5vh,108px);font-size:clamp(17px,min(1.9vw,3.3vh),30px);font-weight:800;color:#fff;transition:opacity .3s,transform .3s,box-shadow .3s}
+.op{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;border-radius:14px;padding:clamp(8px,1.8vh,20px) 18px;min-height:clamp(56px,10.5vh,108px);font-size:clamp(17px,min(1.9vw,3.3vh),30px);font-weight:800;color:#fff;transition:opacity .3s,transform .3s,box-shadow .3s}
 .op .shape{font-size:1.25em;width:1.4em;text-align:center;flex:none}
 .op.o0{background:var(--o0)} .op.o1{background:var(--o1)} .op.o2{background:var(--o2)} .op.o3{background:var(--o3)}
-.op em{margin-left:auto;font-style:normal;font-size:.7em;background:rgba(0,0,0,.28);border-radius:99px;padding:2px 10px;white-space:nowrap}
+.op em{margin-left:auto;font-style:normal;font-size:.8em;background:rgba(0,0,0,.28);border-radius:99px;padding:2px 12px;white-space:nowrap}
+.op .bar{position:absolute;left:0;bottom:0;height:7px;background:rgba(255,255,255,.75);transition:width .6s}
 .grid.rev .op{opacity:.33}
 .grid.rev .op.ok{opacity:1;transform:scale(1.02);box-shadow:0 0 0 4px #fff}
 .explain{background:var(--panel2);border-left:8px solid var(--green);border-radius:12px;padding:10px 18px;font-size:clamp(15px,2.4vh,20px)}
 .explain small{display:block;color:var(--muted);margin-top:4px;font-size:.8em}
 .ctrl{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center}
 .kbd{font-size:12px;opacity:.7;border:1px solid currentColor;border-radius:5px;padding:0 5px;margin-left:6px}
-/* backdoor */
+/* backdoor / inspection */
 body.night{background:radial-gradient(1000px 620px at 50% 0%,#521126 0%,#13070d 70%) fixed}
 body.siren{background:radial-gradient(1000px 620px at 50% 0%,#0d3363 0%,#070b16 70%) fixed}
 .center{text-align:center;display:grid;gap:clamp(8px,1.8vh,16px);justify-items:center}
 .center h1{font-size:clamp(32px,6.5vh,66px);letter-spacing:.05em;margin:0;line-height:1.05}
 .center p{margin:0;font-size:clamp(16px,2.6vh,22px);max-width:42em}
 .env{width:clamp(70px,13vh,130px);animation:float 2.4s ease-in-out infinite}
-.bdhead{display:flex;align-items:center;gap:clamp(16px,3vw,40px)}
 @keyframes float{50%{transform:translateY(-8px) rotate(-3deg)}}
+.bdhead{display:flex;align-items:center;gap:clamp(16px,3vw,40px)}
 .perks{display:grid;grid-template-columns:repeat(3,minmax(0,250px));gap:12px;justify-content:center}
 @media(max-width:800px){.perks{grid-template-columns:1fr}}
 .perk{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:12px 14px;text-align:left}
 .perk b{font-size:20px;display:block}
 .perk .p{color:var(--gold);font-weight:900;font-size:20px}
 .perk span{color:var(--muted);font-size:14px}
-.mpanel{background:rgba(0,0,0,.35);border:1px dashed var(--line);border-radius:12px;padding:10px;display:grid;gap:6px;width:100%;max-width:820px}
-.mrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.mrow b{width:120px;text-align:left}
-.mrow button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;padding:4px 10px;cursor:pointer}
-.mrow button.on{background:var(--gold);color:#271a03;border-color:var(--gold)}
 .big-num{font-size:clamp(48px,11vh,110px);font-weight:900;line-height:1}
-/* inspection */
 .report{max-width:920px;width:100%;margin:0 auto;display:grid;gap:8px}
 .row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-size:clamp(15px,2.4vh,19px);text-align:left}
 .row.caught{border-color:var(--red);background:rgba(229,72,77,.12)}
 .row .r{margin-left:auto;font-weight:900;white-space:nowrap}
-.tag{font-size:12px;font-weight:800;border-radius:6px;padding:2px 8px;background:var(--red);color:#fff;white-space:nowrap}
+.tag{font-size:12px;font-weight:800;border-radius:6px;padding:2px 8px;background:var(--red);color:#fff;white-space:nowrap;display:inline-block}
 .tag.ok{background:var(--green)}
 .tag.gray{background:var(--line)}
-.inrow{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
-.inrow select{width:auto}
+.tag.gold{background:var(--gold);color:#271a03}
 .stamp{display:inline-block;border:4px solid var(--red);color:var(--red);border-radius:10px;padding:2px 14px;font-weight:900;letter-spacing:.12em;transform:rotate(-5deg);font-size:clamp(16px,2.6vh,22px)}
 .stamp.ok{border-color:var(--green);color:var(--green)}
 /* end */
 .podium{display:flex;align-items:flex-end;justify-content:center;gap:16px}
-.pod{width:clamp(120px,16vw,220px);text-align:center;display:grid;gap:6px}
-.pod .nm{font-weight:900;font-size:clamp(16px,2.6vh,22px)}
+.pod{width:clamp(120px,18vw,240px);text-align:center;display:grid;gap:6px}
+.pod .nm{font-weight:900;font-size:clamp(16px,2.6vh,22px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pod .bar{border-radius:14px 14px 0 0;display:grid;place-items:center;font-size:clamp(22px,4vh,32px);font-weight:900;color:#271a03}
-.pod.p1 .bar{height:clamp(110px,26vh,230px);background:linear-gradient(#ffd77a,#e9a720)}
-.pod.p2 .bar{height:clamp(80px,19vh,170px);background:linear-gradient(#eef1f7,#aab4c8)}
-.pod.p3 .bar{height:clamp(60px,14vh,125px);background:linear-gradient(#f3c49b,#c4844f)}
-.rest{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.rest span{background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:4px 14px;color:var(--muted)}
+.pod.p1 .bar{height:clamp(70px,14vh,130px);background:linear-gradient(#ffd77a,#e9a720)}
+.pod.p2 .bar{height:clamp(52px,10vh,96px);background:linear-gradient(#eef1f7,#aab4c8)}
+.pod.p3 .bar{height:clamp(40px,7.5vh,72px);background:linear-gradient(#f3c49b,#c4844f)}
+.center h1.sm{font-size:clamp(24px,4.6vh,44px)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:6px;max-width:980px;width:100%}
+.cgrid .row{padding:6px 12px;font-size:clamp(13px,2vh,16px);gap:8px;flex-wrap:wrap}
 .stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 22px;text-align:center;min-width:150px}
 .stat b{display:block;font-size:clamp(28px,5vh,42px);line-height:1.1}
 .stat span{color:var(--muted);font-size:14px}
-table.led{width:100%;max-width:920px;margin:0 auto;border-collapse:collapse;font-size:clamp(14px,2.2vh,17px)}
-table.led th,table.led td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:left}
+table.led{width:100%;max-width:980px;margin:0 auto;border-collapse:collapse;font-size:clamp(13px,2vh,16px)}
+table.led th,table.led td{padding:3px 10px;border-bottom:1px solid var(--line);text-align:left}
 table.led th{color:var(--muted);font-weight:600}
+table.led td.num,table.led th.num{text-align:right}
+table.led tr.top td{font-weight:800}
 .four{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:920px;width:100%;margin:0 auto}
 .four div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
 .four b{display:block;font-size:20px}
@@ -163,8 +155,9 @@ table.led th{color:var(--muted);font-weight:600}
   <header id="bar">
     <div class="brand">LIÊM <i>hay</i> LÁCH?</div>
     <div id="barInfo"></div>
-    <div class="trust" id="trust" hidden></div>
+    <div id="trustWrap"></div>
     <div class="tools">
+      <button class="danger" data-act="endnow" id="endBtn" hidden title="Kết thúc ván ngay và chuyển sang bảng thành tích">Kết thúc ngay</button>
       <button data-act="mute" id="muteBtn" title="Phím M">Âm thanh: bật</button>
       <button data-act="fs" title="Phím F">Toàn màn hình</button>
     </div>
@@ -219,95 +212,113 @@ const QUESTIONS = [
 const ORDERS = { 8: [0, 1, 2, 3, 4, 5, 6, 7], 12: [0, 1, 8, 2, 3, 4, 5, 9, 6, 7, 10, 11] };
 const PLAN = { 8: { inspect: [2, 5, 7], act2: 4 }, 12: { inspect: [2, 5, 8, 11], act2: 6 } };
 const SHAPES = ["▲", "◆", "●", "■"];
-const SAVE_KEY = "lhl-host-save";
+const SAVE_KEY = "lhl-host-save-v2";
 const qp = new URLSearchParams(location.search);
 const $ = s => document.querySelector(s);
+const hasFb = !!(window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.databaseURL);
 
 let H = null;                       // trạng thái ván chơi (lưu được)
 if (qp.get("debug") === "1") window.__lhl = { get H() { return H; } };
-const R = { store: null, unsub: {}, conn: true, lastSec: -1 };  // phần chạy, không lưu
+const R = { store: null, unsub: {}, conn: true, lastSec: -1 };
 const SET = {
-  mode: qp.get("mode") === "local" ? "local" : qp.get("mode") === "manual" ? "manual" : (window.FIREBASE_CONFIG ? "firebase" : "local"),
+  mode: qp.get("mode") === "local" || !hasFb ? "local" : "firebase",
   n: qp.get("n") === "12" ? 12 : 8,
   qTime: +(qp.get("t") || C.questionTime)
 };
+const LIVE = ["question", "reveal", "backdoor", "bdsum", "inspect", "inspres", "act"];
 
 /* ---------- tiện ích ---------- */
 const now = () => (R.store ? R.store.now() : Date.now());
-const teamIds = () => Object.keys(H.teams).sort((a, b) => H.teams[a].at - H.teams[b].at);
-const nameOf = id => (H.teams[id] ? H.teams[id].name : "?");
+const pids = () => Object.keys(H.players).sort((a, b) => H.players[a].at - H.players[b].at);
+const nameOf = id => (H.players[id] ? H.players[id].name : "?");
 const curQ = () => QUESTIONS[H.order[H.qi]];
-function score(id) { let s = 0; for (const e of H.events) if (e.team === id) s += e.d; return s; }
-function ev(team, d, tag, why) { if (d) H.events.push({ team, d, tag, why }); }
-function unev(tag) { H.events = H.events.filter(e => e.tag !== tag); }
+let _sc = null;
+function scores() { if (_sc) return _sc; const m = {}; for (const e of H.events) m[e.p] = (m[e.p] || 0) + e.d; return (_sc = m); }
+const score = id => scores()[id] || 0;
+function ev(p, d, tag, why) { if (d) { H.events.push({ p, d, tag, why }); _sc = null; } }
+function unev(tag) { H.events = H.events.filter(e => e.tag !== tag); _sc = null; }
+const nTrust = () => Math.max(H.nStart || pids().length, 4);
+const perBribe = () => C.trustBribeK / nTrust();
+const perCatch = () => C.trustCatchK / nTrust();
 function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(H)); } catch (e) {} }
 function stopSub(k) { if (R.unsub[k]) { try { R.unsub[k](); } catch (e) {} R.unsub[k] = null; } }
+function stopAll() { Object.keys(R.unsub).forEach(stopSub); }
 function fresh(mode, room) {
-  return { v: 1, mode, room, n: SET.n, order: ORDERS[SET.n], qTime: SET.qTime, bdTime: C.backdoorTime,
-    phase: "lobby", qi: -1, act: 1, trust: 100, startAt: 0, endsAt: 0, early: false,
-    teams: {}, events: [], ledger: [], answers: {}, results: {}, mult: {}, bribesNow: {},
-    reports: {}, reportsDone: {}, inspectNo: 0, inspectedAfter: -1, lastInspect: null, lastBd: null,
-    endStep: 0, final: null };
+  return { v: 2, mode, room, n: SET.n, order: ORDERS[SET.n], qTime: SET.qTime, bdTime: C.backdoorTime,
+    phase: "lobby", qi: -1, act: 1, trust: 100, nStart: 0, startAt: 0, endsAt: 0, early: false,
+    players: {}, kicked: {}, events: [], ledger: [], answers: {}, results: {}, mult: {}, bribesNow: {},
+    reports: {}, inspectNo: 0, inspectedAfter: -1, lastInspect: null, lastBd: null, rep: {},
+    endStep: 0, showAll: false, final: null };
 }
 function joinURL() {
   return new URL("index.html?room=" + H.room + (H.mode === "local" ? "&mode=local" : ""), location.href).href;
+}
+function uniqueName(n) {
+  const taken = new Set(Object.values(H.players).map(p => p.name.toLowerCase()));
+  if (!taken.has(n.toLowerCase())) return n;
+  for (let k = 2; k < 100; k++) { const c = n.slice(0, 16) + " (" + k + ")"; if (!taken.has(c.toLowerCase())) return c; }
+  return n;
 }
 
 /* ---------- đồng bộ với điện thoại ---------- */
 function pubState() {
   const q = (H.phase === "question" || H.phase === "reveal") ? curQ() : null;
   R.store.set("state", {
-    phase: H.phase, qi: H.qi, total: H.order.length, act: H.act, trust: H.trust, endsAt: H.endsAt,
+    phase: H.phase, qi: H.qi, total: H.order.length, act: H.act, trust: Math.round(H.trust), endsAt: H.endsAt,
+    n: pids().length,
     q: q ? { t: q.t, o: q.o } : null,
     reveal: H.phase === "reveal" ? { a: q.a, e: q.e } : null,
     insp: H.phase === "inspres" ? H.lastInspect : null,
-    final: H.phase === "end" ? H.final : null,
+    final: H.phase === "end" && H.final ? { trust: H.final.trust, trustFail: H.final.trustFail, total: H.final.total, caught: H.final.caught, cleanN: H.final.cleanN, n: H.final.n } : null,
     rate: C.detectRate[H.act - 1], ts: now()
   });
   save();
 }
 function pubBoard() {
-  const b = {};
-  teamIds().forEach(id => { b[id] = { name: H.teams[id].name, score: score(id) }; });
+  const b = {}, sc = scores();
+  pids().forEach(id => { b[id] = { name: H.players[id].name, score: sc[id] || 0 }; });
   R.store.set("board", b);
 }
 function note(id, text, tone) { R.store.update("private/" + id, { note: { at: now(), text, tone: tone || "info" } }); }
 function subscribeCore() {
-  if (H.mode === "manual") return;
-  stopSub("teams"); stopSub("reports");
-  R.unsub.teams = R.store.on("teams", v => {
+  stopSub("players"); stopSub("reports");
+  R.unsub.players = R.store.on("players", v => {
     v = v || {}; let changed = false;
     for (const id in v) {
-      if (!H.teams[id] && v[id] && !(H.kicked && H.kicked[id])) {
-        H.teams[id] = { name: String(v[id].name || "Đội").slice(0, 20), at: v[id].at || now() };
+      if (!H.players[id] && v[id] && !H.kicked[id]) {
+        H.players[id] = { name: uniqueName(String(v[id].name || "Người chơi").slice(0, 20)), at: v[id].at || now() };
         ev(id, C.startScore, "start", "Vốn ban đầu"); changed = true;
       }
     }
-    if (changed) { pubBoard(); save(); if (H.phase === "lobby") render(); else paintBoard(); }
+    if (changed) {
+      pubBoard(); save();
+      if (H.phase === "lobby") { if (!paintPlayers()) render(); paintBar(); } else { paintBoard(); paintBar(); }
+    }
   });
   R.unsub.reports = R.store.on("reports", v => {
     H.reports = v || {}; save();
-    if (H.phase === "inspect") render();
+    if (H.phase === "inspect") { const el = $("#repN"); if (el) el.textContent = Object.keys(H.reports).length; }
   });
 }
 
 /* ---------- các pha của ván chơi ---------- */
-function startGame() { if (!teamIds().length) return; H.qi = 0; goQuestion(); }
+function startGame() {
+  if (!pids().length) return;
+  H.nStart = pids().length; H.qi = 0; goQuestion();
+}
 
 function goQuestion() {
   H.phase = "question"; H.early = false;
   H.startAt = now(); H.endsAt = H.startAt + H.qTime * 1000;
   H.answers[H.qi] = H.answers[H.qi] || {};
-  if (H.mode !== "manual") {
-    const qi = H.qi; stopSub("ans");
-    R.unsub.ans = R.store.on("answers/" + qi, v => {
-      if (H.phase !== "question" || H.qi !== qi) return;
-      H.answers[qi] = v || {};
-      const ids = teamIds(), n = ids.filter(id => H.answers[qi][id]).length;
-      const el = $("#ansCount"); if (el) el.textContent = n + "/" + ids.length;
-      if (ids.length && n >= ids.length && !H.early) { H.early = true; H.endsAt = Math.min(H.endsAt, now() + 1200); }
-    });
-  }
+  const qi = H.qi; stopSub("ans");
+  R.unsub.ans = R.store.on("answers/" + qi, v => {
+    if (H.phase !== "question" || H.qi !== qi) return;
+    H.answers[qi] = v || {};
+    const ids = pids(), n = ids.filter(id => H.answers[qi][id]).length;
+    const el = $("#ansCount"); if (el) el.textContent = n + "/" + ids.length;
+    if (ids.length && n >= ids.length && !H.early) { H.early = true; H.endsAt = Math.min(H.endsAt, now() + 1200); }
+  });
   R.lastSec = -1; pubState(); render();
 }
 
@@ -321,7 +332,7 @@ function scoreQuestion(qi) {
   const q = QUESTIONS[H.order[qi]], ans = H.answers[qi] || {}, res = {};
   const limit = H.startAt + H.qTime * 1000 + 1500;
   unev("q:" + qi);
-  teamIds().forEach(id => {
+  pids().forEach(id => {
     const a = ans[id];
     let ok = !!a && a.c === q.a;
     if (ok && a.at && a.at > limit) ok = false;
@@ -335,7 +346,7 @@ function scoreQuestion(qi) {
     res[id] = { ok, pts, c: a ? a.c : -1 };
   });
   H.results[qi] = res;
-  H.ledger.forEach(L => { if (L.q === qi && (L.perk === "lode" || L.perk === "chay")) L.gain = res[L.team] ? res[L.team].pts : 0; });
+  H.ledger.forEach(L => { if (L.q === qi && (L.perk === "lode" || L.perk === "chay")) L.gain = res[L.p] ? res[L.p].pts : 0; });
   R.store.set("results/" + qi, res);
 }
 
@@ -350,16 +361,14 @@ function afterQuestion() {
 function goBackdoor() {
   H.phase = "backdoor"; H.bribesNow = {}; H.early = false;
   H.endsAt = now() + H.bdTime * 1000; H.mult[H.qi] = H.mult[H.qi] || {};
-  if (H.mode !== "manual") {
-    const qi = H.qi; stopSub("br");
-    R.unsub.br = R.store.on("bribes/" + qi, v => {
-      if (H.phase !== "backdoor" || H.qi !== qi) return;
-      H.bribesNow = v || {};
-      const ids = teamIds(), n = ids.filter(id => H.bribesNow[id]).length;
-      const el = $("#bdCount"); if (el) el.textContent = n + "/" + ids.length;
-      if (ids.length && n >= ids.length && !H.early) { H.early = true; H.endsAt = Math.min(H.endsAt, now() + 1200); }
-    });
-  }
+  const qi = H.qi; stopSub("br");
+  R.unsub.br = R.store.on("bribes/" + qi, v => {
+    if (H.phase !== "backdoor" || H.qi !== qi) return;
+    H.bribesNow = v || {};
+    const ids = pids(), n = ids.filter(id => H.bribesNow[id]).length;
+    const el = $("#bdCount"); if (el) el.textContent = n + "/" + ids.length;
+    if (ids.length && n >= ids.length && !H.early) { H.early = true; H.endsAt = Math.min(H.endsAt, now() + 1200); }
+  });
   R.lastSec = -1; pubState(); render(); sfx.coin();
 }
 
@@ -367,16 +376,16 @@ function processBackdoor() {
   if (H.phase !== "backdoor") return;
   stopSub("br");
   const qi = H.qi, q = curQ(); let count = 0;
-  teamIds().forEach(id => {
+  pids().forEach(id => {
     const b = H.bribesNow[id]; if (!b || !PERKS[b.perk]) return;
     const P = PERKS[b.perk];
     if (score(id) < P.price) { note(id, "Không đủ điểm, phong bì bị trả lại.", "warn"); return; }
     let fixQ = null;
     if (b.perk === "xoa") {
       for (let j = qi - 1; j >= 0; j--) { const r = H.results[j] && H.results[j][id]; if (r && !r.ok) { fixQ = j; break; } }
-      if (fixQ === null) { note(id, "Đội chưa sai câu nào, phong bì bị trả lại.", "warn"); return; }
+      if (fixQ === null) { note(id, "Bạn chưa sai câu nào, phong bì bị trả lại.", "warn"); return; }
     }
-    const L = { id: uid(6), team: id, perk: b.perk, q: qi, cost: P.price, gain: 0, rolled: false, caught: false, fixQ };
+    const L = { id: uid(6), p: id, perk: b.perk, q: qi, cost: P.price, gain: 0, rolled: false, caught: false, fixQ };
     ev(id, -P.price, "cost:" + L.id, "Phong bì " + P.name);
     if (b.perk === "lode") {
       const wrong = q.o.map((_, i) => i).filter(i => i !== q.a);
@@ -391,7 +400,7 @@ function processBackdoor() {
       R.store.set("results/" + fixQ + "/" + id, H.results[fixQ][id]);
     }
     H.ledger.push(L); count++;
-    H.trust = Math.max(0, H.trust - C.trustPerBribe);
+    H.trust = Math.max(0, H.trust - perBribe());
     note(id, "Đã trao phong bì " + P.name + " (−" + P.price + " điểm). Coi chừng thanh tra!", "bribe");
   });
   H.lastBd = { qi, count }; H.phase = "bdsum";
@@ -403,51 +412,80 @@ function goInspect() { H.phase = "inspect"; pubState(); render(); sfx.siren(); }
 function catchL(L, by, no) {
   L.caught = true; L.by = by; L.caughtAt = no;
   L.claw = Math.max(0, L.gain || 0); L.fine = C.fineMultiplier * L.cost;
-  ev(L.team, -L.claw, "claw:" + L.id, "Thu hồi lợi ích");
-  ev(L.team, -L.fine, "fine:" + L.id, "Phạt phong bì");
-  H.trust = Math.min(100, H.trust + C.trustPerCatch);
+  ev(L.p, -L.claw, "claw:" + L.id, "Thu hồi lợi ích");
+  ev(L.p, -L.fine, "fine:" + L.id, "Phạt phong bì");
+  H.trust = Math.min(100, H.trust + perCatch());
 }
 
 function runInspect() {
   if (H.phase !== "inspect") return;
-  const no = H.inspectNo + 1, rate = C.detectRate[H.act - 1], caught = [], reps = [];
-  Object.keys(H.reports || {}).forEach(from => {
-    const r = H.reports[from];
-    if (H.reportsDone[from] || !r || !H.teams[from] || !H.teams[r.target] || r.target === from) return;
-    H.reportsDone[from] = true;
-    const ok = H.ledger.some(L => L.team === r.target && (!L.caught || L.caughtAt === no));
-    H.ledger.forEach(L => { if (L.team === r.target && !L.caught) { catchL(L, "tố giác", no); caught.push(L); } });
-    const d = ok ? C.reportReward[H.act - 1] : -C.reportFalsePenalty;
-    ev(from, d, "rep:" + from, ok ? "Tố giác đúng" : "Tố giác sai");
-    reps.push({ from, target: r.target, ok, d });
+  const no = H.inspectNo + 1, rate = C.detectRate[H.act - 1], caught = [], repRes = [], rewarded = {};
+  const reps = Object.entries(H.reports || {})
+    .filter(([from, r]) => H.players[from] && r && H.players[r.target] && r.target !== from)
+    .sort((a, b) => (a[1].at || 0) - (b[1].at || 0));
+  reps.forEach(([from, r]) => {
+    const ok = H.ledger.some(L => L.p === r.target && (!L.caught || L.caughtAt === no));
+    H.ledger.forEach(L => { if (L.p === r.target && !L.caught) { catchL(L, "tố giác", no); caught.push(L); } });
+    let d = 0, capped = false;
+    if (ok) {
+      rewarded[r.target] = (rewarded[r.target] || 0) + 1;
+      if (rewarded[r.target] <= C.reportCap) d = C.reportReward[H.act - 1]; else capped = true;
+    } else d = -C.reportFalsePenalty;
+    ev(from, d, "rep:" + no + ":" + from, ok ? "Tố giác đúng" : "Tố giác sai");
+    H.rep[from] = H.rep[from] || { ok: 0, bad: 0 };
+    if (ok) H.rep[from].ok++; else H.rep[from].bad++;
+    repRes.push({ from, target: r.target, ok, d, capped });
   });
   H.ledger.forEach(L => {
     if (L.caught || L.rolled) return;
-    const prior = H.ledger.filter(x => x.team === L.team && x.rolled).length;  // càng tham càng dễ lộ
+    const prior = H.ledger.filter(x => x.p === L.p && x.rolled).length;   // càng tham càng dễ lộ
     L.rolled = true;
     if (Math.random() < Math.min(C.detectMax, rate + C.repeatStep * prior)) { catchL(L, "thanh tra", no); caught.push(L); }
   });
+  Object.keys(H.reports || {}).forEach(k => R.store.remove("reports/" + k));
+  H.reports = {};
   H.inspectNo = no; H.inspectedAfter = H.qi;
-  H.lastInspect = { no, rate, caught: caught.map(L => ({ team: L.team, perk: L.perk, q: L.q, claw: L.claw, fine: L.fine, by: L.by })), reports: reps };
+  H.lastInspect = { no, rate, repN: reps.length, repOk: repRes.filter(r => r.ok).length,
+    caught: caught.map(L => ({ p: L.p, name: nameOf(L.p), perk: L.perk, q: L.q, claw: L.claw, fine: L.fine, by: L.by })) };
   H.phase = "inspres";
-  caught.forEach(L => note(L.team, "Bị phát hiện phong bì " + PERKS[L.perk].name + ": thu hồi " + L.claw + ", phạt " + L.fine + " điểm.", "caught"));
-  reps.forEach(r => { if (!caught.some(L => L.team === r.from)) note(r.from, r.ok ? "Tố giác đúng! +" + r.d + " điểm." : "Tố giác sai: " + r.d + " điểm.", r.ok ? "good" : "warn"); });
+  caught.forEach(L => note(L.p, "Bị phát hiện phong bì " + PERKS[L.perk].name + ": thu hồi " + L.claw + ", phạt " + L.fine + " điểm.", "caught"));
+  repRes.forEach(r => R.store.update("private/" + r.from, { repResult: { no, target: nameOf(r.target), ok: r.ok, d: r.d, capped: r.capped } }));
   pubState(); pubBoard(); render();
   if (caught.length) sfx.bad(); else sfx.good();
 }
 
 function goEnd() {
+  stopSub("ans"); stopSub("br"); stopSub("reports");
   if (!H.final) {
-    const ids = teamIds(), trustFail = H.trust < C.trustLimit;
+    const ids = pids(), trustFail = H.trust < C.trustLimit;
     if (trustFail) ids.forEach(id => ev(id, -Math.round(Math.max(0, score(id)) * C.trustPenaltyRate), "end:trust", "Niềm tin sụp đổ"));
-    const cleanTeams = ids.filter(id => !H.ledger.some(L => L.team === id));
-    cleanTeams.forEach(id => ev(id, C.cleanBonus, "end:clean", "Đội liêm chính"));
-    const ranking = ids.map(id => ({ id, name: nameOf(id), score: score(id), bribes: H.ledger.filter(L => L.team === id).length })).sort((a, b) => b.score - a.score);
-    H.final = { trust: H.trust, trustFail, clean: cleanTeams, ranking,
-      ledger: H.ledger.map(L => ({ team: L.team, perk: L.perk, q: L.q, cost: L.cost, caught: L.caught, by: L.by || null })),
-      total: H.ledger.length, caught: H.ledger.filter(L => L.caught).length };
+    const clean = ids.filter(id => !H.ledger.some(L => L.p === id));
+    clean.forEach(id => ev(id, C.cleanBonus, "end:clean", "Liêm chính"));
+    const qDone = Object.keys(H.results).length;
+    const rows = ids.map(id => {
+      const mine = H.ledger.filter(L => L.p === id), rp = H.rep[id] || { ok: 0, bad: 0 };
+      const correct = Object.values(H.results).filter(r => r[id] && r[id].ok).length;
+      return { id, name: nameOf(id), score: score(id), correct, bribes: mine.length, caught: mine.filter(L => L.caught).length,
+        repOk: rp.ok, repBad: rp.bad, clean: clean.includes(id) };
+    }).sort((a, b) => b.score - a.score || b.correct - a.correct || a.name.localeCompare(b.name));
+    rows.forEach((r, i) => { r.rank = i && rows[i - 1].score === r.score ? rows[i - 1].rank : i + 1; });
+    H.final = { trust: Math.round(H.trust), trustFail, qDone, n: ids.length, cleanN: clean.length, rows,
+      total: H.ledger.length, caught: H.ledger.filter(L => L.caught).length,
+      byPerk: Object.keys(PERKS).map(k => ({ k, n: H.ledger.filter(L => L.perk === k).length })) };
+    rows.forEach(r => R.store.update("private/" + r.id, { final: { rank: r.rank, of: rows.length, score: r.score, correct: r.correct, qDone,
+      bribes: r.bribes, caught: r.caught, repOk: r.repOk, repBad: r.repBad, clean: r.clean } }));
   }
-  H.phase = "end"; H.endStep = 0; pubState(); pubBoard(); render(); sfx.fanfare(); setTimeout(confetti, 300);
+  H.phase = "end"; H.endStep = 0; H.showAll = false; pubState(); pubBoard(); render(); sfx.fanfare(); setTimeout(confetti, 300);
+}
+
+async function closeSession() {
+  if (!H || H.phase !== "end") return;
+  stopAll(); H.phase = "closed";
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+  await R.store.set("state", { phase: "closed", ts: now() });
+  render();
+  // dọn dữ liệu của phòng (người chơi đã nhận kết quả của mình)
+  setTimeout(() => { ["players", "board", "answers", "bribes", "results", "private", "reports"].forEach(p => R.store.remove(p)); }, 4000);
 }
 
 function primary() {
@@ -465,71 +503,63 @@ function primary() {
 }
 
 /* ---------- tạo phòng / tiếp tục ---------- */
+function bindConn() { R.store.onConnection(c => { R.conn = c; paintBar(); }); }
 async function createRoom() {
   sfx.unlock();
   const room = (qp.get("room") || roomCode()).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8) || roomCode();
-  const storeRoom = SET.mode === "manual" ? "MANUAL-" + room : room;
-  try { R.store = await openStore(SET.mode === "firebase" ? "firebase" : "local", storeRoom); }
+  try { R.store = await openStore(SET.mode, room); }
   catch (e) { alert("Không mở được kết nối: " + e.message); return; }
   await R.store.reset();
   H = fresh(SET.mode, room);
-  R.store.onConnection(c => { R.conn = c; paintBar(); });
-  subscribeCore(); pubState(); pubBoard(); render();
+  bindConn(); subscribeCore(); pubState(); pubBoard(); render();
 }
 async function resume() {
   let saved = null; try { saved = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) {}
-  if (!saved) return;
+  if (!saved || saved.v !== 2) return;
   sfx.unlock();
-  try { R.store = await openStore(saved.mode === "firebase" ? "firebase" : "local", saved.mode === "manual" ? "MANUAL-" + saved.room : saved.room); }
+  try { R.store = await openStore(saved.mode, saved.room); }
   catch (e) { alert("Không mở được kết nối: " + e.message); return; }
-  H = saved;
-  R.store.onConnection(c => { R.conn = c; paintBar(); });
-  subscribeCore();
+  H = saved; _sc = null;
+  bindConn(); subscribeCore();
   if (H.phase === "question") goQuestion();
   else if (H.phase === "backdoor") goBackdoor();
   else { pubState(); pubBoard(); render(); }
 }
-function addManualTeams() {
-  const inputs = [...document.querySelectorAll("[data-mname]")];
-  inputs.forEach((inp, k) => {
-    const id = "m" + (k + 1);
-    const nm = (inp.value.trim() || "Nhóm " + (k + 1)).slice(0, 20);
-    if (!H.teams[id]) { H.teams[id] = { name: nm, at: Date.now() + k }; ev(id, C.startScore, "start", "Vốn ban đầu"); }
-    else H.teams[id].name = nm;
-  });
-  pubBoard(); save(); render();
-}
 
 /* ---------- vẽ màn hình ---------- */
 function trustHTML(t, big) {
+  t = Math.round(t);
   const cls = t >= 70 ? "" : t >= 50 ? "mid" : "low";
   return `<div class="trust ${cls} ${big ? "bigtrust" : ""}"><span class="muted">${big ? "Niềm tin của lớp" : "Niềm tin"}</span><div class="tbar"><i style="width:${t}%"></i></div><b>${t}%</b></div>`;
 }
 function paintBar() {
-  const info = $("#barInfo"), tr = $("#trust");
-  if (!H) { info.innerHTML = ""; tr.hidden = true; return; }
-  const modeName = { firebase: "Online", local: "Thử 1 máy", manual: "Thủ công" }[H.mode];
+  const info = $("#barInfo"), tw = $("#trustWrap"), eb = $("#endBtn");
+  if (!H || H.phase === "closed") { info.innerHTML = ""; tw.innerHTML = ""; eb.hidden = true; return; }
+  const modeName = H.mode === "firebase" ? "Online" : "Thử 1 máy";
   const qtxt = H.qi >= 0 ? `<span class="chip">Câu <b>${Math.min(H.qi + 1, H.order.length)}/${H.order.length}</b></span>` : "";
-  info.innerHTML = `<span class="chip">Phòng <b>${esc(H.room)}</b></span>${qtxt}
-    <span class="chip ${H.act === 2 ? "act2" : ""}">Màn <b>${H.act}</b> · thanh tra ${Math.round(C.detectRate[H.act - 1] * 100)}%</span>
+  info.innerHTML = `<span class="chip">Phòng <b>${esc(H.room)}</b></span><span class="chip">Người chơi <b>${pids().length}</b></span>${qtxt}
+    ${H.phase !== "lobby" ? `<span class="chip ${H.act === 2 ? "act2" : ""}">Màn <b>${H.act}</b> · thanh tra ${Math.round(C.detectRate[H.act - 1] * 100)}%</span>` : ""}
     ${H.mode !== "firebase" || !R.conn ? `<span class="chip ${R.conn ? "" : "off"}">${modeName}${R.conn ? "" : " · mất kết nối"}</span>` : ""}`;
-  tr.hidden = false; tr.outerHTML = trustHTML(H.trust).replace('<div class="trust', '<div id="trust" class="trust');
+  tw.innerHTML = H.phase === "lobby" ? "" : trustHTML(H.trust);
+  eb.hidden = !LIVE.includes(H.phase);
 }
 function paintBoard() {
   const el = $("#board");
-  if (!H || (H.phase === "lobby" && !teamIds().length) || (H.phase === "end" && H.endStep >= 1)) { el.innerHTML = ""; return; }
-  const showDelta = H.phase === "reveal";
-  const manualMark = H.mode === "manual" && H.phase === "reveal";
-  let ids = teamIds();
-  if (["reveal", "inspres", "bdsum", "end", "act"].includes(H.phase)) ids = ids.slice().sort((a, b) => score(b) - score(a));
-  const res = H.results[H.qi] || {};
-  el.innerHTML = ids.map(id => {
-    const r = res[id]; let d = "";
-    if (showDelta) d = r && r.ok ? `<div class="d up">+${r.pts}</div>` : `<div class="d no">✗</div>`;
-    else d = `<div class="d"></div>`;
-    return `<div class="tm ${manualMark ? "click" : ""} ${manualMark && r && r.ok ? "on" : ""}" ${manualMark ? `data-act="mtoggle" data-team="${id}" role="button" tabindex="0"` : ""}>
-      <div class="n">${esc(nameOf(id))}</div><div class="s">${score(id)}</div>${d}</div>`;
-  }).join("");
+  if (!H || H.phase === "lobby" || H.phase === "closed" || (H.phase === "end" && H.endStep >= 1)) { el.innerHTML = ""; return; }
+  const sc = scores();
+  const arr = pids().map(id => ({ id, name: nameOf(id), s: sc[id] || 0 })).sort((a, b) => b.s - a.s);
+  el.innerHTML = `<div class="tp cnt"><div class="n">Người chơi</div><div class="s">${arr.length}</div></div>` +
+    arr.slice(0, 5).map((t, i) => `<div class="tp"><div class="n">${i + 1}. ${esc(t.name)}</div><div class="s">${t.s}</div></div>`).join("");
+}
+function paintPlayers() {
+  const el = $("#plist"); if (!el) return false;
+  const ids = pids();
+  el.innerHTML = ids.map(id => `<span data-act="kick" data-p="${id}" role="button" tabindex="0" title="Bấm để xóa người này khỏi phòng">${esc(nameOf(id))}</span>`).join("") ||
+    `<span class="muted" style="animation:none;background:none;border:0;cursor:default">Đang chờ mọi người vào…</span>`;
+  el.scrollTop = el.scrollHeight;
+  const c = $("#pcount"); if (c) c.textContent = ids.length;
+  const b = $("#startBtn"); if (b) b.disabled = !ids.length;
+  return true;
 }
 function timerHTML(big) {
   return `<div class="timer ${big ? "big" : ""}" id="timer"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="44"/><circle class="fg" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg><div class="num">–</div></div>`;
@@ -549,31 +579,29 @@ function render() {
   const m = $("#main");
   if (!H) { m.innerHTML = setupHTML(); paintBar(); paintBoard(); return; }
   const f = { lobby: lobbyHTML, question: questionHTML, reveal: questionHTML, backdoor: backdoorHTML, bdsum: bdsumHTML,
-    inspect: inspectHTML, inspres: inspresHTML, act: actHTML, end: endHTML }[H.phase];
+    inspect: inspectHTML, inspres: inspresHTML, act: actHTML, end: endHTML, closed: closedHTML }[H.phase];
   m.innerHTML = f();
   paintBar(); paintBoard();
-  if (H.phase === "lobby" && H.mode !== "manual") drawQR();
+  if (H.phase === "lobby") { paintPlayers(); drawQR(); }
   if (H.phase === "question" || H.phase === "backdoor") paintTimer(Math.max(0, H.endsAt - now()), H.phase === "question" ? H.qTime : H.bdTime);
 }
 
 function setupHTML() {
   let saved = null; try { saved = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) {}
-  const hasFb = !!(window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.databaseURL);
-  const resumeBtn = saved && saved.phase && saved.phase !== "lobby" && saved.phase !== "end"
-    ? `<button class="btn ghost" data-act="resume">Tiếp tục ván dở: phòng ${esc(saved.room)}, câu ${saved.qi + 1}/${saved.order.length}</button>` : "";
+  const resumeBtn = saved && saved.v === 2 && saved.phase && saved.phase !== "lobby" && saved.phase !== "closed"
+    ? `<button class="btn ghost" data-act="resume">Tiếp tục ván dở: phòng ${esc(saved.room)}${saved.qi >= 0 ? ", câu " + (saved.qi + 1) + "/" + saved.order.length : ""}</button>` : "";
   const r = (k, title, sub, dis) => `<button class="radio ${SET.mode === k ? "on" : ""}" data-act="mode" data-v="${k}" ${dis ? "disabled" : ""}>${title}<small>${sub}</small></button>`;
   return `<div class="setup">
     <section class="hero">
       <h1>LIÊM<br><i>hay</i> LÁCH?</h1>
-      <p>Quiz nhiều người chơi về nguyên nhân và tác hại của tham nhũng. Trả lời đúng để kiếm điểm, hoặc lén đi "cửa sau" để lấy lợi thế. Nhưng thanh tra và các đội khác đang theo dõi.</p>
+      <p>Quiz chơi cá nhân về nguyên nhân và tác hại của tham nhũng. Trả lời đúng để kiếm điểm, hoặc lén đi "cửa sau" để lấy lợi thế. Nhưng thanh tra và các bạn khác đang theo dõi.</p>
       <p class="note">Mọi nhân vật trong game là hư cấu. Mục đích: trải nghiệm vì sao "lách" luôn phải trả giá.</p>
     </section>
     <section class="card">
-      <h2>Tạo phòng chơi</h2>
+      <h2>Mở phòng chơi</h2>
       <div><div class="lbl">Chế độ</div><div class="opts">
-        ${r("firebase", "Online", hasFb ? "Mỗi đội 1 điện thoại" : "Chưa có config.js", !hasFb)}
+        ${r("firebase", "Online", hasFb ? "Mỗi bạn 1 điện thoại" : "Chưa có config.js", !hasFb)}
         ${r("local", "Thử trên 1 máy", "Diễn tập, không cần mạng")}
-        ${r("manual", "Thủ công", "Mất mạng: MC tự nhập")}
       </div></div>
       <div><div class="lbl">Số câu hỏi</div><div class="opts">
         <button class="radio ${SET.n === 8 ? "on" : ""}" data-act="n" data-v="8">8 câu<small>khoảng 10 phút</small></button>
@@ -582,43 +610,31 @@ function setupHTML() {
       <div><div class="lbl">Thời gian mỗi câu</div><div class="opts">
         ${[15, 20, 30].map(t => `<button class="radio ${SET.qTime === t ? "on" : ""}" data-act="qt" data-v="${t}">${t} giây</button>`).join("")}
       </div></div>
-      <button class="btn" data-act="create">Tạo phòng <span class="kbd">Enter</span></button>
+      <button class="btn" data-act="create">Mở phòng <span class="kbd">Enter</span></button>
       ${resumeBtn}
       <div class="note">Diễn tập nhanh trên một máy: mở <a href="thu_nghiem.html">thu_nghiem.html</a> (màn hình MC + 4 điện thoại giả lập).</div>
     </section></div>`;
 }
 
 function lobbyHTML() {
-  const ids = teamIds();
   const rules = `<ul class="rules">
-      <li>Trả lời đúng <b>+${C.basePoints}</b>, nhanh thêm tới <b>+${C.speedBonus}</b>. Mỗi đội có vốn ${C.startScore} điểm.</li>
-      <li>Từ câu 2, trước mỗi câu "cửa sau" mở ${C.backdoorTime} giây: đội có thể <b>bí mật</b> đưa 1 phong bì.</li>
-      <li>Thanh tra sau câu ${PLAN[H.n].inspect.map(i => i + 1).join(", ")}: mỗi phong bì có thể bị lộ (${C.detectRate[0] * 100}%, Màn 2: ${C.detectRate[1] * 100}%). <b>Càng tham càng dễ lộ:</b> mỗi phong bì đội đã đưa trước đó +${C.repeatStep * 100}%. Bị lộ: thu hồi lợi ích + phạt gấp ${C.fineMultiplier}.</li>
-      <li>Tố giác 1 lần: đúng <b>+${C.reportReward[0]}</b> (Màn 2: +${C.reportReward[1]}), sai <b>−${C.reportFalsePenalty}</b>.</li>
-      <li>Mỗi phong bì: niềm tin của lớp −${C.trustPerBribe}%. Cuối game dưới ${C.trustLimit}%: <b>mọi đội −${C.trustPenaltyRate * 100}%</b>. Đội không đưa phong bì nào: <b>+${C.cleanBonus}</b>.</li>
+      <li>Mỗi người chơi cá nhân, vốn <b>${C.startScore}</b> điểm. Trả lời đúng <b>+${C.basePoints}</b>, nhanh thêm tới <b>+${C.speedBonus}</b>.</li>
+      <li>Từ câu 2, trước mỗi câu "cửa sau" mở ${C.backdoorTime} giây: bạn có thể <b>bí mật</b> đưa 1 phong bì để lấy lợi thế.</li>
+      <li>Thanh tra sau câu ${PLAN[H.n].inspect.map(i => i + 1).join(", ")}: mỗi phong bì có thể bị lộ (${C.detectRate[0] * 100}%, Màn 2: ${C.detectRate[1] * 100}%). <b>Càng tham càng dễ lộ:</b> +${C.repeatStep * 100}% cho mỗi phong bì bạn đã đưa trước đó. Bị lộ: thu hồi lợi ích + phạt gấp ${C.fineMultiplier}.</li>
+      <li>Mỗi đợt thanh tra bạn được <b>tố giác</b> 1 bạn khác: đúng <b>+${C.reportReward[0]}</b> (Màn 2: +${C.reportReward[1]}), sai <b>−${C.reportFalsePenalty}</b>.</li>
+      <li>Phong bì làm <b>niềm tin của lớp</b> giảm, cả lớp cùng chịu. Hết ván dưới ${C.trustLimit}%: <b>mọi người −${C.trustPenaltyRate * 100}%</b>. Ai không đưa phong bì nào: <b>+${C.cleanBonus}</b>.</li>
     </ul>`;
   const perks = `<table class="pk">${Object.values(PERKS).map(p => `<tr><td><b>${esc(p.name)}</b></td><td>${p.price} điểm</td><td class="muted">${esc(p.desc)}</td></tr>`).join("")}</table>`;
-  if (H.mode === "manual") {
-    const n = Math.max(ids.length, 6);
-    const inputs = Array.from({ length: n }, (_, k) => `<input data-mname="${k}" value="${esc(H.teams["m" + (k + 1)] ? H.teams["m" + (k + 1)].name : "Nhóm " + (k + 1))}" aria-label="Tên đội ${k + 1}">`).join("");
-    return `<div class="lobby"><section class="card"><h2>Chế độ thủ công</h2>
-        <p class="note">Không cần điện thoại. Các đội giơ tay trả lời, MC bấm chọn đội đúng. Phong bì và tố giác: đội nói nhỏ với "người gác cổng", MC ghi vào bảng.</p>
-        <div class="mteams">${inputs}</div>
-        <div class="ctrl"><button class="btn ghost" data-act="maddrow">+ Thêm đội</button><button class="btn ghost" data-act="mteams">Lưu các đội</button></div>
-      </section>
-      <section class="side"><h2>Luật chơi</h2>${rules}${perks}
-        <div class="ctrl"><button class="btn" data-act="primary" ${ids.length ? "" : "disabled"}>Bắt đầu <span class="kbd">Space</span></button></div></section></div>`;
-  }
   return `<div class="lobby">
     <section class="join"><div class="lbl" style="color:#4b4f6b">Mã phòng</div><div class="code">${esc(H.room)}</div>
       <div id="qr"></div><div class="url">${esc(joinURL())}</div>
-      <p style="margin:8px 0 0;font-weight:700">Mỗi đội 1 điện thoại: quét mã QR để vào phòng.</p></section>
+      <p style="margin:8px 0 0;font-weight:700">Quét mã QR bằng điện thoại, nhập tên của bạn để vào chơi.</p></section>
     <section class="side">
-      <h2>Các đội đã vào (${ids.length})</h2>
-      <div class="teams">${ids.map(id => `<span class="kick" data-act="kick" data-team="${id}" role="button" tabindex="0" title="Bấm để xóa đội này (vào nhầm, trùng tên)">${esc(nameOf(id))} <small class="muted">✕</small></span>`).join("") || `<span class="muted" style="animation:none;background:none;border:0">Đang chờ các đội…</span>`}</div>
-      ${ids.length ? `<div class="note">Đội vào nhầm hoặc trùng: bấm vào tên để xóa.</div>` : ""}
+      <h2><b id="pcount">0</b> người chơi đã vào</h2>
+      <div id="plist"></div>
+      <div class="note">Vào nhầm hoặc tên không phù hợp: bấm vào tên để xóa.</div>
       ${rules}${perks}
-      <div class="ctrl"><button class="btn" data-act="primary" ${ids.length ? "" : "disabled"}>Bắt đầu <span class="kbd">Space</span></button></div>
+      <div class="ctrl"><button class="btn" id="startBtn" data-act="primary" disabled>Bắt đầu <span class="kbd">Space</span></button></div>
     </section></div>`;
 }
 function drawQR() {
@@ -628,74 +644,58 @@ function drawQR() {
 }
 
 function questionHTML() {
-  const q = curQ(), rev = H.phase === "reveal", ids = teamIds();
+  const q = curQ(), rev = H.phase === "reveal", ids = pids();
   const ans = H.answers[H.qi] || {};
   const counts = q.o.map((_, i) => ids.filter(id => ans[id] && ans[id].c === i).length);
-  const n = ids.filter(id => ans[id]).length;
-  const opts = q.o.map((o, i) => `<div class="op o${i} ${rev && i === q.a ? "ok" : ""}"><span class="shape">${SHAPES[i]}</span><span>${esc(o)}</span>${rev && H.mode !== "manual" ? `<em>${counts[i]} đội</em>` : ""}</div>`).join("");
+  const n = ids.filter(id => ans[id]).length, mx = Math.max(1, ...counts);
+  const opts = q.o.map((o, i) => `<div class="op o${i} ${rev && i === q.a ? "ok" : ""}"><span class="shape">${SHAPES[i]}</span><span>${esc(o)}</span>${rev ? `<em>${counts[i]}</em><i class="bar" style="width:${Math.round(counts[i] / mx * 100)}%"></i>` : ""}</div>`).join("");
+  const res = H.results[H.qi] || {}, right = Object.values(res).filter(r => r.ok).length;
   const top = `<div class="qtop"><div class="qn">Câu ${H.qi + 1}/${H.order.length}</div><div class="grow"></div>
-    ${rev ? "" : (H.mode === "manual" ? `<div class="muted">Các đội giơ tay: 1 ▲ · 2 ◆ · 3 ● · 4 ■</div>` : `<div class="muted">Đã trả lời: <b id="ansCount">${n}/${ids.length}</b></div>`)}
+    ${rev ? `<div class="muted"><b>${right}/${ids.length}</b> người trả lời đúng</div>` : `<div class="muted">Đã trả lời: <b id="ansCount">${n}/${ids.length}</b></div>`}
     ${rev ? "" : timerHTML()}</div>`;
   const explain = rev ? `<div class="explain">${esc(q.e)}<small>Căn cứ: ${esc(q.s)}</small></div>` : "";
-  const hint = rev && H.mode === "manual" ? `<div class="note" style="text-align:center">Bấm vào các đội trả lời đúng ở thanh bên dưới để cộng điểm.</div>` : "";
   const btn = rev ? `<button class="btn" data-act="primary">Tiếp tục <span class="kbd">Space</span></button>` : `<button class="btn ghost" data-act="primary">Chốt đáp án ngay <span class="kbd">Space</span></button>`;
-  return `${top}<div class="qtext">${esc(q.t)}</div><div class="grid ${rev ? "rev" : ""}">${opts}</div>${explain}${hint}<div class="ctrl">${btn}</div>`;
+  return `${top}<div class="qtext">${esc(q.t)}</div><div class="grid ${rev ? "rev" : ""}">${opts}</div>${explain}<div class="ctrl">${btn}</div>`;
 }
 
-function manualBribePanel() {
-  const rows = teamIds().map(id => {
-    const cur = H.bribesNow[id] && H.bribesNow[id].perk;
-    const b = (k, label) => `<button class="${cur === k || (!cur && k === "none") ? "on" : ""}" data-act="mbribe" data-team="${id}" data-perk="${k}">${label}</button>`;
-    return `<div class="mrow"><b>${esc(nameOf(id))}</b>${b("none", "Không")}${Object.keys(PERKS).map(k => b(k, PERKS[k].name)).join("")}</div>`;
-  }).join("");
-  return `<div class="mpanel"><div class="note">Ghi phong bì (người gác cổng báo lại). Nên tạm tắt máy chiếu khi ghi.</div>${rows}</div>`;
-}
 function backdoorHTML() {
-  const ids = teamIds(), n = ids.filter(id => H.bribesNow[id]).length;
+  const ids = pids(), n = ids.filter(id => H.bribesNow[id]).length;
   return `<div class="center"><div class="bdhead">${envelopeSVG}${timerHTML(true)}</div>
     <h1>CỬA SAU ĐANG MỞ</h1>
-    <p>Người gác cổng đang chờ… Mỗi đội quyết định <b>bí mật</b> trên điện thoại: đưa phong bì, hay giữ liêm chính?</p>
+    <p>Người gác cổng đang chờ… Mỗi người quyết định <b>bí mật</b> trên điện thoại: đưa phong bì, hay giữ liêm chính?</p>
     <div class="perks">${Object.values(PERKS).map(p => `<div class="perk"><b>${esc(p.name)}</b><div class="p">${p.price} điểm</div><span>${esc(p.desc)}</span></div>`).join("")}</div>
-    <p class="muted">Mỗi phong bì làm niềm tin của lớp giảm ${C.trustPerBribe}%.${H.mode !== "manual" ? ` Đã quyết định: <b id="bdCount">${n}/${ids.length}</b>` : ""}</p>
-    ${H.mode === "manual" ? manualBribePanel() : ""}
+    <p class="muted">Mỗi phong bì làm niềm tin của lớp giảm. Đã quyết định: <b id="bdCount">${n}/${ids.length}</b></p>
     <div class="ctrl"><button class="btn ghost" data-act="primary">Đóng cửa sau <span class="kbd">Space</span></button></div></div>`;
 }
 function bdsumHTML() {
-  const c = H.lastBd ? H.lastBd.count : 0;
+  const c = H.lastBd ? H.lastBd.count : 0, N = pids().length;
   const body = c
-    ? `<div class="big-num">${c}</div><p>phong bì vừa được trao. Niềm tin của lớp giảm ${c * C.trustPerBribe}%.</p><p class="muted">Ai đã đưa? Chỉ người gác cổng biết… Hãy để ý điểm số bất thường.</p>`
+    ? `<div class="big-num">${c}<span style="font-size:.35em;font-weight:600"> / ${N} người</span></div><p>đã đưa phong bì ở lượt này. Niềm tin của lớp giảm ${(c * perBribe()).toFixed(1).replace(".", ",")}%.</p><p class="muted">Ai đã đưa? Chỉ người gác cổng biết… Hãy để ý điểm số bất thường trên bảng xếp hạng.</p>`
     : `<h1>Không ai đi cửa sau</h1><p>Cả lớp giữ liêm chính ở lượt này.</p>`;
   return `<div class="center">${envelopeSVG}<h1 style="font-size:clamp(24px,4vh,40px)">Cửa sau đã đóng</h1>${body}${trustHTML(H.trust, true)}
     <div class="ctrl"><button class="btn" data-act="primary">Vào câu ${H.qi + 1} <span class="kbd">Space</span></button></div></div>`;
 }
 function inspectHTML() {
-  const pending = Object.keys(H.reports || {}).filter(k => !H.reportsDone[k] && H.reports[k]).length;
-  const ids = teamIds();
-  const manual = H.mode === "manual" ? `<div class="mpanel"><div class="note">Ghi tố giác (đội nói với MC):</div>
-      <div class="inrow"><select id="repFrom">${ids.map(id => `<option value="${id}">${esc(nameOf(id))}</option>`).join("")}</select> tố giác
-      <select id="repTo">${ids.map(id => `<option value="${id}">${esc(nameOf(id))}</option>`).join("")}</select>
-      <button class="btn ghost" data-act="mreport">Ghi</button></div>
-      ${Object.keys(H.reports || {}).filter(k => !H.reportsDone[k]).map(k => `<div class="note">${esc(nameOf(k))} → ${esc(nameOf(H.reports[k].target))}</div>`).join("")}</div>` : "";
   return `<div class="center">
     <div class="stamp">Thanh tra</div>
     <h1>THANH TRA CHUẨN BỊ VÀO CUỘC</h1>
-    <p>Màn ${H.act}: mỗi phong bì chưa bị kiểm tra có <b>${Math.round(C.detectRate[H.act - 1] * 100)}%</b> khả năng bị phát hiện, cộng thêm ${C.repeatStep * 100}% cho mỗi phong bì đội đó đã đưa trước đó.</p>
-    <p>Đội nào nghi ngờ đội khác? Đây là lúc <b>tố giác</b> trên điện thoại (mỗi đội 1 lần). Đơn đã nhận: <b>${pending}</b></p>
-    ${manual}
+    <p>Màn ${H.act}: mỗi phong bì chưa bị kiểm tra có <b>${Math.round(C.detectRate[H.act - 1] * 100)}%</b> khả năng bị phát hiện, cộng thêm ${C.repeatStep * 100}% cho mỗi phong bì người đó đã đưa trước đó.</p>
+    <p>Bạn nghi ai đã đưa phong bì? Đây là lúc <b>tố giác</b> trên điện thoại (mỗi đợt 1 lần). Đơn đã nhận: <b id="repN">${Object.keys(H.reports || {}).length}</b></p>
     <div class="ctrl"><button class="btn red" data-act="primary">Thanh tra vào cuộc <span class="kbd">Space</span></button></div></div>`;
 }
 function inspresHTML() {
-  const I = H.lastInspect || { caught: [], reports: [] };
-  const rows = I.caught.map(c => `<div class="row caught"><span class="tag">${c.by === "tố giác" ? "Bị tố giác" : "Thanh tra"}</span>
-      <b>${esc(nameOf(c.team))}</b><span>phong bì ${esc(PERKS[c.perk].name)} (trước câu ${c.q + 1})</span>
+  const I = H.lastInspect || { caught: [], repN: 0, repOk: 0 };
+  const shown = I.caught.slice(0, 8);
+  const rows = shown.map(c => `<div class="row caught"><span class="tag">${c.by === "tố giác" ? "Bị tố giác" : "Thanh tra"}</span>
+      <b>${esc(c.name)}</b><span>${esc(PERKS[c.perk].name)} · câu ${c.q + 1}</span>
       <span class="r">−${c.claw + c.fine}</span></div>`).join("");
-  const reps = I.reports.map(r => `<div class="row"><span class="tag ${r.ok ? "ok" : "gray"}">${r.ok ? "Tố giác đúng" : "Tố giác sai"}</span>
-      <span><b>${esc(nameOf(r.from))}</b> tố giác <b>${esc(nameOf(r.target))}</b></span><span class="r">${signed(r.d)}</span></div>`).join("");
+  const more = I.caught.length > shown.length ? `<div class="muted">… và ${I.caught.length - shown.length} người khác</div>` : "";
   const none = !I.caught.length ? `<p>Không phát hiện phong bì nào. Hoặc cả lớp trong sạch, hoặc… chưa bị phát hiện.</p>` : "";
+  const rep = I.repN ? `<div class="row"><span class="tag ${I.repOk ? "ok" : "gray"}">Tố giác</span><span>${I.repN} đơn tố giác, <b>${I.repOk}</b> đơn đúng</span></div>` : "";
   return `<div class="center"><div class="stamp ${I.caught.length ? "" : "ok"}">${I.caught.length ? "Có sai phạm" : "Chưa phát hiện"}</div>
-    <h1>BIÊN BẢN THANH TRA SỐ ${I.no || 1}</h1>${none}
-    <div class="report">${rows}${reps}</div>
-    ${I.caught.length ? `<p class="muted">Bị phát hiện: thu hồi toàn bộ điểm có được nhờ phong bì và phạt gấp ${C.fineMultiplier} số đã đưa. Mỗi vụ bị xử lý giúp niềm tin hồi lại ${C.trustPerCatch}%.</p>` : ""}
+    <h1 class="sm">BIÊN BẢN THANH TRA SỐ ${I.no || 1}</h1>${none}
+    <div class="cgrid">${rows}</div>${more}<div class="report">${rep}</div>
+    ${I.caught.length ? `<p class="muted">Bị phát hiện: thu hồi toàn bộ điểm có được nhờ phong bì và phạt gấp ${C.fineMultiplier} số đã đưa. Mỗi vụ bị xử lý giúp niềm tin của lớp hồi lại.</p>` : ""}
     ${trustHTML(H.trust, true)}
     <div class="ctrl"><button class="btn" data-act="primary">Tiếp tục <span class="kbd">Space</span></button></div></div>`;
 }
@@ -704,7 +704,7 @@ function actHTML() {
     <div class="report">
       <div class="row"><span class="tag">Thanh tra</span><span>Xác suất phát hiện mỗi phong bì tăng từ ${C.detectRate[0] * 100}% lên <b>${C.detectRate[1] * 100}%</b></span></div>
       <div class="row"><span class="tag ok">Tố giác</span><span>Tố giác đúng được thưởng <b>+${C.reportReward[1]}</b></span></div>
-      <div class="row"><span class="tag gray">Hỏi cả lớp</span><span>Giờ còn đội nào <b>dám</b> đưa phong bì không?</span></div>
+      <div class="row"><span class="tag gray">Hỏi cả lớp</span><span>Giờ còn ai <b>dám</b> đưa phong bì không?</span></div>
     </div>
     <p class="muted">Xử lý nghiêm, không có vùng cấm để cán bộ "không dám" tham nhũng.</p>
     <div class="ctrl"><button class="btn" data-act="primary">Tiếp tục <span class="kbd">Space</span></button></div></div>`;
@@ -712,43 +712,45 @@ function actHTML() {
 function endHTML() {
   const F = H.final;
   if (H.endStep === 0) {
-    const cleanNames = F.clean.map(nameOf);
+    const cleanRows = F.rows.filter(r => r.clean), names = cleanRows.slice(0, 10).map(r => esc(r.name)).join(", ");
     return `<div class="center"><h1>TỔNG KẾT</h1>${trustHTML(F.trust, true)}
       <div class="report">
         <div class="row ${F.trustFail ? "caught" : ""}"><span class="tag ${F.trustFail ? "" : "ok"}">Niềm tin ${F.trust}%</span>
-          <span>${F.trustFail ? `Dưới ${C.trustLimit}%: tham nhũng làm hại tất cả, <b>mọi đội bị trừ ${C.trustPenaltyRate * 100}% điểm</b>, kể cả đội trong sạch.` : `Từ ${C.trustLimit}% trở lên: lớp giữ được lòng tin, không ai bị trừ chung.`}</span></div>
-        <div class="row"><span class="tag ok">Đội liêm chính +${C.cleanBonus}</span><span>${cleanNames.length ? cleanNames.map(esc).join(", ") : "Không có đội nào giữ được liêm chính suốt ván."}</span></div>
+          <span>${F.trustFail ? `Dưới ${C.trustLimit}%: tham nhũng làm hại tất cả, <b>mọi người bị trừ ${C.trustPenaltyRate * 100}% điểm</b>, kể cả những bạn trong sạch.` : `Từ ${C.trustLimit}% trở lên: lớp giữ được lòng tin, không ai bị trừ chung.`}</span></div>
+        <div class="row"><span class="tag ok">Liêm chính +${C.cleanBonus}</span><span>${F.cleanN ? `<b>${F.cleanN}</b> người không đưa phong bì nào: ${names}${F.cleanN > 10 ? " và " + (F.cleanN - 10) + " người khác" : ""}` : "Không ai giữ được liêm chính suốt ván."}</span></div>
       </div>
-      <div class="ctrl"><button class="btn" data-act="primary">Xem bảng xếp hạng <span class="kbd">Space</span></button></div></div>`;
+      <div class="ctrl"><button class="btn" data-act="primary">Xem bảng thành tích <span class="kbd">Space</span></button></div></div>`;
   }
   if (H.endStep === 1) {
-    const r = F.ranking.map(x => ({ ...x, score: score(x.id) })).sort((a, b) => b.score - a.score);
-    const pod = (t, c) => t ? `<div class="pod ${c}"><div class="nm">${esc(t.name)}</div><div class="bar">${t.score}</div></div>` : "";
-    return `<div class="center"><h1>BẢNG XẾP HẠNG</h1>
-      <div class="podium">${pod(r[1], "p2")}${pod(r[0], "p1")}${pod(r[2], "p3")}</div>
-      <div class="rest">${r.slice(3).map((t, k) => `<span>${k + 4}. ${esc(t.name)} · ${t.score}</span>`).join("")}</div>
-      <div class="ctrl"><button class="btn" data-act="primary">Sự thật được bật mí <span class="kbd">Space</span></button></div></div>`;
+    const rows = F.rows, pod = (t, c) => t ? `<div class="pod ${c}"><div class="nm">${esc(t.name)}</div><div class="bar">${t.score}</div></div>` : "";
+    const list = H.showAll ? rows : rows.slice(0, 10);
+    const titles = r => [r.clean ? `<span class="tag ok">Liêm chính</span>` : "", r.repOk ? `<span class="tag gold">Thám tử ×${r.repOk}</span>` : "",
+      r.caught ? `<span class="tag">Bị phát hiện ×${r.caught}</span>` : ""].filter(Boolean).join(" ");
+    return `<div class="center"><h1 class="sm">BẢNG THÀNH TÍCH</h1>
+      <div class="podium">${pod(rows[1], "p2")}${pod(rows[0], "p1")}${pod(rows[2], "p3")}</div>
+      <table class="led"><tr><th class="num">Hạng</th><th>Người chơi</th><th class="num">Điểm</th><th class="num">Đúng</th><th>Danh hiệu</th></tr>
+        ${list.map(r => `<tr class="${r.rank <= 3 ? "top" : ""}"><td class="num">${r.rank}</td><td>${esc(r.name)}</td><td class="num">${r.score}</td><td class="num">${r.correct}/${F.qDone}</td><td>${titles(r)}</td></tr>`).join("")}</table>
+      <div class="ctrl">${rows.length > 10 ? `<button class="btn ghost" data-act="showall">${H.showAll ? "Thu gọn (top 10)" : "Hiện đủ " + rows.length + " người"}</button>` : ""}
+        <button class="btn ghost" data-act="endback">Quay lại</button>
+        <button class="btn" data-act="primary">Sự thật được bật mí <span class="kbd">Space</span></button></div></div>`;
   }
   const hidden = F.total - F.caught;
-  const byTeam = {};
-  F.ledger.forEach(L => { (byTeam[L.team] = byTeam[L.team] || []).push(L); });
-  const rows = Object.entries(byTeam).sort((a, b) => b[1].length - a[1].length).map(([id, arr]) => {
-    const kinds = {}; arr.forEach(L => { kinds[L.perk] = (kinds[L.perk] || 0) + 1; });
-    const kindTxt = Object.entries(kinds).map(([k, n]) => esc(PERKS[k].name) + (n > 1 ? " ×" + n : "")).join(", ");
-    const c = arr.filter(L => L.caught).length, byRep = arr.filter(L => L.by === "tố giác").length;
-    return `<tr><td><b>${esc(nameOf(id))}</b></td><td>${arr.length}</td><td>${kindTxt}</td>
-      <td>${c ? `<span class="tag">${c} bị phát hiện${byRep ? " (" + byRep + " do tố giác)" : ""}</span> ` : ""}${arr.length - c ? `<span class="tag gray">${arr.length - c} lọt lưới</span>` : ""}</td></tr>`;
-  }).join("");
   return `<div class="center"><h1>SỰ THẬT ĐƯỢC BẬT MÍ</h1>
     <div class="stats"><div class="stat"><b>${F.total}</b><span>phong bì đã trao</span></div>
       <div class="stat"><b>${F.caught}</b><span>bị phát hiện</span></div>
       <div class="stat"><b>${hidden}</b><span>lọt lưới</span></div>
       <div class="stat"><b>${F.trust}%</b><span>niềm tin còn lại</span></div></div>
-    ${F.total ? `<table class="led"><tr><th>Đội</th><th>Số phong bì</th><th>Loại</th><th>Kết cục</th></tr>${rows}</table>` : `<p>Không có phong bì nào trong ván này. Cả lớp liêm chính!</p>`}
+    <p>${F.total ? F.byPerk.filter(x => x.n).map(x => esc(PERKS[x.k].name) + ": " + x.n).join(" · ") : "Không có phong bì nào trong ván này. Cả lớp liêm chính!"}</p>
     <p>${hidden ? `${hidden} phong bì lọt lưới: tham nhũng luôn khó phát hiện, vì vậy cần đồng thời bốn chữ KHÔNG.` : "Muốn tham nhũng không còn chỗ đứng, cần đồng thời bốn chữ KHÔNG."}</p>
     <div class="four"><div><b>Không thể</b><span>thể chế, kiểm soát quyền lực</span></div><div><b>Không dám</b><span>xử lý không vùng cấm</span></div>
       <div><b>Không muốn</b><span>giáo dục, văn hóa liêm chính</span></div><div><b>Không cần</b><span>đời sống được bảo đảm</span></div></div>
-    <div class="ctrl"><button class="btn ghost" data-act="newgame">Ván mới</button></div></div>`;
+    <div class="ctrl"><button class="btn ghost" data-act="endback">Quay lại bảng thành tích</button>
+      <button class="btn red" data-act="closesession">Kết thúc phiên chơi</button></div></div>`;
+}
+function closedHTML() {
+  return `<div class="center"><h1>PHIÊN CHƠI ĐÃ KẾT THÚC</h1>
+    <p>Cảm ơn cả lớp đã chơi. Dữ liệu của phòng ${esc(H.room)} đã được xóa khỏi hệ thống.</p>
+    <div class="ctrl"><button class="btn" data-act="newgame">Mở phòng mới</button></div></div>`;
 }
 function confetti() {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -774,6 +776,7 @@ setInterval(() => {
 /* ---------- sự kiện ---------- */
 function toggleMute() { sfx.setMuted(!sfx.isMuted()); $("#muteBtn").textContent = "Âm thanh: " + (sfx.isMuted() ? "tắt" : "bật"); }
 function fs() { const d = document; if (!d.fullscreenElement) { if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen(); } else if (d.exitFullscreen) d.exitFullscreen(); }
+function resetToSetup() { stopAll(); try { localStorage.removeItem(SAVE_KEY); } catch (e) {} H = null; _sc = null; render(); }
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
   if (b.tagName === "BUTTON") b.blur();
@@ -786,35 +789,26 @@ document.addEventListener("click", e => {
   else if (a === "primary") primary();
   else if (a === "mute") toggleMute();
   else if (a === "fs") fs();
-  else if (a === "newgame") { if (confirm("Kết thúc ván này và tạo ván mới?")) { localStorage.removeItem(SAVE_KEY); Object.keys(R.unsub).forEach(stopSub); H = null; render(); } }
+  else if (a === "endnow") { if (H && LIVE.includes(H.phase) && confirm("Kết thúc ván ngay và chuyển sang bảng thành tích?")) goEnd(); }
+  else if (a === "showall") { H.showAll = !H.showAll; render(); }
+  else if (a === "endback") { if (H.endStep > 0) { H.endStep--; save(); render(); } }
+  else if (a === "closesession") { if (confirm("Kết thúc phiên chơi? Mọi điện thoại sẽ thấy thông báo kết thúc và dữ liệu phòng bị xóa.")) closeSession(); }
+  else if (a === "newgame") resetToSetup();
   else if (a === "kick" && H && H.phase === "lobby") {
-    const id = b.dataset.team;
-    if (!H.teams[id] || !confirm("Xóa đội \"" + nameOf(id) + "\" khỏi phòng?")) return;
-    delete H.teams[id]; H.events = H.events.filter(x => x.team !== id);
-    H.kicked = H.kicked || {}; H.kicked[id] = true;
+    const id = b.dataset.p;
+    if (!H.players[id] || !confirm("Xóa \"" + nameOf(id) + "\" khỏi phòng?")) return;
+    delete H.players[id]; H.kicked[id] = true; H.events = H.events.filter(x => x.p !== id); _sc = null;
     R.store.update("private/" + id, { kicked: true });
-    setTimeout(() => R.store.remove("teams/" + id), 300);
-    pubBoard(); save(); render();
+    setTimeout(() => R.store.remove("players/" + id), 300);
+    pubBoard(); save(); paintPlayers(); paintBar();
   }
-  else if (a === "mteams") addManualTeams();
-  else if (a === "maddrow") { addManualTeams(); const k = teamIds().length; const id = "m" + (k + 1); H.teams[id] = { name: "Nhóm " + (k + 1), at: Date.now() + k }; ev(id, C.startScore, "start", "Vốn ban đầu"); pubBoard(); save(); render(); }
-  else if (a === "mtoggle") {
-    const id = b.dataset.team, q = curQ(); H.answers[H.qi] = H.answers[H.qi] || {};
-    const cur = H.answers[H.qi][id];
-    H.answers[H.qi][id] = cur && cur.c === q.a ? { c: -1 } : { c: q.a };
-    scoreQuestion(H.qi); pubBoard(); save(); paintBoard();
-  }
-  else if (a === "mbribe") { const id = b.dataset.team, k = b.dataset.perk; if (k === "none") delete H.bribesNow[id]; else H.bribesNow[id] = { perk: k }; render(); }
-  else if (a === "mreport") { const f = $("#repFrom").value, t = $("#repTo").value; if (f && t && f !== t && !H.reportsDone[f]) { H.reports[f] = { target: t, at: now() }; save(); render(); } }
 });
 document.addEventListener("keydown", e => {
   const tag = (e.target.tagName || "").toLowerCase();
   if (tag === "input" || tag === "select" || tag === "textarea") return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.key === " " || e.key === "Enter") {
-    if (tag === "button") return;
-    const chip = e.target.closest && e.target.closest("[data-act='mtoggle']");
-    if (chip) { e.preventDefault(); chip.click(); return; }
+    if (tag === "button" || (e.target.dataset && e.target.dataset.act === "kick")) return;
     e.preventDefault();
     if (!H) createRoom(); else primary();
   } else if (e.key === "m" || e.key === "M") toggleMute();

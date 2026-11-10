@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f1222">
-<title>Liêm hay Lách? · Đội chơi</title>
+<title>Liêm hay Lách? · Người chơi</title>
 <link rel="stylesheet" href="common.css">
 <style>
 body{font-size:16px}
@@ -26,9 +26,6 @@ p{margin:0}
 .center{text-align:center}
 .big{font-size:44px;font-weight:900;line-height:1}
 .field{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--ink);width:100%;font-size:18px}
-.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.presets button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 4px;font-weight:700;cursor:pointer}
-.presets button.on{border-color:var(--gold);background:rgba(242,181,68,.15)}
 .btn{width:100%;font-size:18px;padding:14px}
 .cd{font-weight:900;font-size:28px;text-align:center}
 .cd.low{color:var(--red)}
@@ -60,11 +57,17 @@ body.siren{background:radial-gradient(700px 500px at 50% 0%,#0d3363 0%,#070b16 7
 .toast.good{background:var(--green);color:#fff}
 @keyframes up{from{transform:translate(-50%,20px);opacity:0}}
 .modal{position:fixed;inset:0;background:rgba(5,6,15,.8);display:flex;align-items:flex-end;justify-content:center;z-index:30}
-.sheet{background:var(--bg2);border:1px solid var(--line);border-radius:18px 18px 0 0;padding:16px;width:min(520px,100%);display:grid;gap:10px;max-height:85svh;overflow:auto}
-.pick{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px;text-align:left;font-weight:700;cursor:pointer;color:var(--ink)}
+.sheet{background:var(--bg2);border:1px solid var(--line);border-radius:18px 18px 0 0;padding:16px;width:min(520px,100%);display:grid;gap:10px;max-height:88svh;overflow:auto}
+.list{display:grid;gap:6px;max-height:38svh;overflow:auto}
+.pick{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:11px 12px;text-align:left;font-weight:700;cursor:pointer;color:var(--ink)}
 .pick.on{border-color:var(--red);background:rgba(229,72,77,.15)}
 ul.small{margin:0;padding-left:1.1em;color:var(--muted);font-size:14px;display:grid;gap:4px}
 .row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.top5{display:grid;gap:4px;font-size:15px}
+.top5 .r{display:flex;gap:8px;align-items:center;padding:4px 8px;border-radius:8px}
+.top5 .r.me{background:rgba(242,181,68,.18);font-weight:800}
+.top5 .r b{width:1.6em}
+.top5 .r span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 <script src="config.js"></script>
 <script src="common.js"></script>
@@ -86,8 +89,8 @@ const mode = qp.get("mode") === "local" ? "local" : "firebase";
 const slot = qp.get("slot") || "";
 let room = (qp.get("room") || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 const $ = s => document.querySelector(s);
-const P = { store: null, me: null, st: null, board: {}, results: {}, priv: {}, myAns: {}, myBr: {}, report: null,
-  conn: true, sub: {}, subQi: -1, sel: null, preset: "", lastNote: 0, joining: false, reportSel: null, lastPhaseKey: "" };
+const P = { store: null, me: null, st: null, board: {}, results: {}, priv: {}, myAns: {}, myBr: {}, report: null, endInfo: null,
+  conn: true, sub: {}, subQi: -1, sel: null, lastNote: 0, joining: false, reportSel: null, search: "", lastPhaseKey: "" };
 const meKey = () => "lhl-me-" + room + (slot ? "-" + slot : "");
 
 /* ---------- vào phòng ---------- */
@@ -104,7 +107,7 @@ async function join(name) {
   if (!name || P.joining) return;
   P.joining = true; sfx.unlock();
   const me = { id: uid(10), name };
-  await P.store.set("teams/" + me.id, { name, at: P.store.now() });
+  await P.store.set("players/" + me.id, { name, at: P.store.now() });
   localStorage.setItem(meKey(), JSON.stringify(me));
   P.me = me; P.joining = false; startSubs();
 }
@@ -112,47 +115,50 @@ function startSubs() {
   const s = P.store, id = P.me.id;
   P.sub.state = s.on("state", v => {
     P.st = v;
-    if (v && v.qi !== P.subQi) resubQ(v.qi);
+    if (v && v.phase !== "closed" && v.qi !== P.subQi) resubQ(v.qi);
     render();
   });
-  P.sub.board = s.on("board", v => { P.board = v || {}; paintHeader(); if (P.st && P.st.phase === "end") render(); });
+  P.sub.board = s.on("board", v => { P.board = v || {}; paintHeader(); if (P.st && ["lobby", "reveal", "end"].includes(P.st.phase)) render(); });
   P.sub.results = s.on("results", v => { P.results = v || {}; if (P.st && (P.st.phase === "reveal" || P.st.phase === "backdoor")) render(); });
   P.sub.priv = s.on("private/" + id, v => {
     P.priv = v || {};
-    if (P.priv.kicked) { leaveRoom("MC đã xóa đội khỏi phòng. Hãy chọn lại tên đội."); return; }
+    if (P.priv.kicked) { leaveRoom("Bạn đã bị xóa khỏi phòng. Hãy vào lại với tên khác."); return; }
+    if (P.priv.final) P.endInfo = P.priv.final;
     const n = P.priv.note;
     if (n && n.at > P.lastNote) { const first = P.lastNote === 0 && n.at < s.now() - 15000; P.lastNote = n.at; if (!first) toast(n.text, n.tone); }
-    if (P.st && P.st.phase === "question") render();
+    if (P.st && ["question", "inspres", "end", "closed"].includes(P.st.phase)) render();
   });
   P.sub.report = s.on("reports/" + id, v => { P.report = v; render(); });
-  P.sub.me = s.on("teams/" + id, v => {
-    // MC tạo lại phòng cùng mã: tự vào lại (trừ khi bị MC xóa).
+  P.sub.me = s.on("players/" + id, v => {
+    // MC tạo lại phòng cùng mã: tự vào lại (trừ khi bị MC xóa hoặc phiên đã đóng).
     if (v === null && P.me && !P.joining) setTimeout(() => {
-      if (P.me && P.me.id === id && !P.priv.kicked) s.set("teams/" + id, { name: P.me.name, at: s.now() });
+      if (P.me && P.me.id === id && !P.priv.kicked && !(P.st && P.st.phase === "closed")) s.set("players/" + id, { name: P.me.name, at: s.now() });
     }, 1500);
   });
 }
-function leaveRoom(msg) {
-  Object.keys(P.sub).forEach(k => { if (P.sub[k]) { try { P.sub[k](); } catch (e) {} P.sub[k] = null; } });
-  localStorage.removeItem(meKey());
-  P.me = null; P.st = null; P.priv = {}; P.subQi = -1; P.myAns = {}; P.myBr = {}; P.report = null; P.preset = "";
-  document.body.className = ""; render(); toast(msg, "warn");
-}
 function resubQ(qi) {
-  ["ans", "br"].forEach(k => { if (P.sub[k]) { try { P.sub[k](); } catch (e) {} } });
+  ["ans", "br"].forEach(k => { if (P.sub[k]) { try { P.sub[k](); } catch (e) {} P.sub[k] = null; } });
   P.subQi = qi; P.sel = null;
   if (qi == null || qi < 0) return;
   P.sub.ans = P.store.on("answers/" + qi + "/" + P.me.id, v => { P.myAns[qi] = v; render(); });
   P.sub.br = P.store.on("bribes/" + qi + "/" + P.me.id, v => { P.myBr[qi] = v; render(); });
 }
+function leaveRoom(msg) {
+  Object.keys(P.sub).forEach(k => { if (P.sub[k]) { try { P.sub[k](); } catch (e) {} P.sub[k] = null; } });
+  localStorage.removeItem(meKey());
+  P.me = null; P.st = null; P.priv = {}; P.subQi = -1; P.myAns = {}; P.myBr = {}; P.report = null; P.endInfo = null;
+  document.body.className = ""; render(); toast(msg, "warn");
+}
 
 /* ---------- tiện ích ---------- */
-const myScore = () => (P.board[P.me.id] ? P.board[P.me.id].score : C.startScore);
-function myRank() {
-  const arr = Object.entries(P.board).sort((a, b) => b[1].score - a[1].score);
-  const i = arr.findIndex(x => x[0] === P.me.id);
-  return { rank: i + 1, of: arr.length };
+function ranked() { return Object.entries(P.board).map(([id, v]) => ({ id, name: v.name, score: v.score })).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name)); }
+function myInfo() {
+  const arr = ranked(), i = arr.findIndex(x => x.id === P.me.id);
+  if (i < 0) return { score: C.startScore, rank: 0, of: arr.length, name: P.me.name };
+  const rank = arr.findIndex(x => x.score === arr[i].score) + 1;
+  return { score: arr[i].score, rank, of: arr.length, name: arr[i].name };
 }
+const myScore = () => myInfo().score;
 const nameOf = id => (P.board[id] ? P.board[id].name : "?");
 function hasWrong() {
   const qi = P.st ? P.st.qi : 0;
@@ -165,27 +171,37 @@ function toast(text, tone) {
   document.body.appendChild(t); setTimeout(() => t.remove(), 4500);
   if (navigator.vibrate) navigator.vibrate(tone === "caught" ? [200, 80, 200] : 80);
 }
+function top5HTML() {
+  const arr = ranked(), me = P.me.id;
+  if (!arr.length) return "";
+  const top = arr.slice(0, 5);
+  const mine = arr.findIndex(x => x.id === me);
+  const rows = top.map((x, i) => `<div class="r ${x.id === me ? "me" : ""}"><b>${i + 1}</b><span>${esc(x.name)}</span><b style="width:auto">${x.score}</b></div>`);
+  if (mine >= 5) rows.push(`<div class="r me"><b>${mine + 1}</b><span>${esc(arr[mine].name)} (bạn)</span><b style="width:auto">${arr[mine].score}</b></div>`);
+  return `<div class="card"><b>Bảng xếp hạng</b><div class="top5">${rows.join("")}</div></div>`;
+}
 
 /* ---------- vẽ ---------- */
 function paintHeader() {
   const hd = $("#hd"), tl = $("#tl");
   if (!P.me) { hd.hidden = true; tl.hidden = true; return; }
-  const r = myRank();
+  const me = myInfo();
   hd.hidden = false;
   hd.innerHTML = `<span class="dot ${P.conn ? "" : "off"}" title="${P.conn ? "Đã kết nối" : "Mất kết nối"}"></span>
-    <span class="nm">${esc(P.me.name)}</span>
-    <span class="center"><div class="sc">${myScore()}</div><div class="rk">${r.rank ? "hạng " + r.rank + "/" + r.of : ""}</div></span>`;
-  if (P.st && P.st.phase !== "lobby") {
+    <span class="nm">${esc(me.name)}</span>
+    <span class="center"><div class="sc">${me.score}</div><div class="rk">${me.rank ? "hạng " + me.rank + "/" + me.of : ""}</div></span>`;
+  if (P.st && P.st.phase !== "lobby" && P.st.phase !== "closed") {
     const t = P.st.trust, cls = t >= 70 ? "" : t >= 50 ? "mid" : "low";
     tl.hidden = false;
     tl.innerHTML = `<div class="trust ${cls}"><span class="muted">Niềm tin của lớp</span><div class="tbar"><i style="width:${t}%"></i></div><b>${t}%</b></div>`;
   } else tl.hidden = true;
 }
 function reportBtn() {
-  if (P.report || !P.st || ["lobby", "end", "question", "backdoor"].includes(P.st.phase)) return "";
+  if (!P.st || !["reveal", "bdsum", "inspect", "inspres", "act"].includes(P.st.phase)) return "";
+  if (P.report) return `<p class="muted center" style="font-size:14px">Bạn đã tố giác <b>${esc(nameOf(P.report.target))}</b>. Kết quả có ở lần thanh tra tới.</p>`;
   if (Object.keys(P.board).length < 2) return "";
   const rw = C.reportReward[(P.st.act || 1) - 1];
-  return `<button class="btn ghost" data-act="report">Tố giác một đội (đúng +${rw}, sai −${C.reportFalsePenalty})</button>`;
+  return `<button class="btn ghost" data-act="report">Tố giác một bạn (đúng +${rw}, sai −${C.reportFalsePenalty})</button>`;
 }
 function render() {
   paintHeader();
@@ -198,10 +214,8 @@ function render() {
     return;
   }
   if (!P.me) {
-    const presets = Array.from({ length: 8 }, (_, k) => "Nhóm " + (k + 1));
-    m.innerHTML = `<div class="card"><h1>Phòng ${esc(room)}</h1><p class="muted">Chọn tên đội (mỗi đội dùng 1 điện thoại).</p>
-      <div class="presets">${presets.map(p => `<button data-act="preset" data-v="${p}" class="${P.preset === p ? "on" : ""}">${p}</button>`).join("")}</div>
-      <input class="field" id="nameIn" maxlength="20" placeholder="Hoặc gõ tên đội" value="${esc(P.preset)}" aria-label="Tên đội">
+    m.innerHTML = `<div class="card"><h1>Phòng ${esc(room)}</h1><p class="muted">Nhập tên của bạn (người chơi cá nhân). Nên dùng tên thật để các bạn nhận ra.</p>
+      <input class="field" id="nameIn" maxlength="20" placeholder="Tên của bạn" autocomplete="off" aria-label="Tên của bạn">
       <button class="btn" data-act="join">Vào phòng</button></div>`;
     return;
   }
@@ -213,37 +227,39 @@ function render() {
     const r = P.results[st.qi] && P.results[st.qi][P.me.id];
     if (r) { P.lastPhaseKey = key; if (r.ok) sfx.good(); else sfx.bad(); }
   }
-  m.innerHTML = ({ lobby, backdoor, bdsum, question, reveal, inspect, inspres, act, end }[st.phase] || lobby)();
+  m.innerHTML = ({ lobby, backdoor, bdsum, question, reveal, inspect, inspres, act, end, closed }[st.phase] || lobby)();
   tick();
 }
 function lobby() {
-  return `<div class="card center"><h2>Đã vào phòng ${esc(room)}</h2><p class="big" style="font-size:28px">${esc(P.me.name)}</p><p class="muted">Chờ MC bắt đầu…</p></div>
-    <div class="card"><b>Luật nhanh</b><ul class="small">
-      <li>Trả lời đúng +${C.basePoints}, nhanh thêm tới +${C.speedBonus}.</li>
+  const n = Object.keys(P.board).length;
+  return `<div class="card center"><h2>Bạn đã vào phòng ${esc(room)}</h2><p class="big" style="font-size:30px">${esc(myInfo().name)}</p>
+      <p class="muted">${n ? n + " người đã vào. " : ""}Chờ MC bắt đầu…</p></div>
+    <div class="card"><b>Luật nhanh (chơi cá nhân)</b><ul class="small">
+      <li>Vốn ${C.startScore} điểm. Trả lời đúng +${C.basePoints}, nhanh thêm tới +${C.speedBonus}.</li>
       <li>Trước mỗi câu (từ câu 2) có thể bí mật đưa phong bì để lấy lợi thế.</li>
       <li>Thanh tra có thể phát hiện: thu hồi lợi ích + phạt gấp ${C.fineMultiplier}. Càng đưa nhiều càng dễ lộ.</li>
-      <li>Tố giác đúng được thưởng, sai bị trừ. Mỗi đội 1 lần.</li>
-      <li>Niềm tin của lớp dưới ${C.trustLimit}% khi hết game: mọi đội bị trừ ${C.trustPenaltyRate * 100}%.</li></ul></div>`;
+      <li>Mỗi đợt thanh tra bạn được tố giác 1 bạn khác: đúng được thưởng, sai bị trừ.</li>
+      <li>Niềm tin của lớp dưới ${C.trustLimit}% khi hết ván: ai cũng bị trừ ${C.trustPenaltyRate * 100}%.</li></ul></div>`;
 }
 function backdoor() {
   const qi = P.st.qi, mine = P.myBr[qi];
   if (mine) {
     const p = PERKS[mine.perk];
     return `<div class="card center"><h2>Cửa sau</h2><div class="cd" id="cd">–</div>
-      ${p ? `<p>Đội đã chọn đưa phong bì <b>${esc(p.name)}</b> (−${p.price}).</p><p class="muted">Giữ bí mật nhé… thanh tra có thể vào cuộc bất cứ lúc nào.</p>`
-          : `<p><b>Đội chọn giữ liêm chính.</b></p><p class="muted">Không mất gì, không sợ thanh tra.</p>`}</div>`;
+      ${p ? `<p>Bạn đã chọn đưa phong bì <b>${esc(p.name)}</b> (−${p.price}).</p><p class="muted">Giữ bí mật nhé… thanh tra có thể vào cuộc bất cứ lúc nào.</p>`
+          : `<p><b>Bạn chọn giữ liêm chính.</b></p><p class="muted">Không mất gì, không sợ thanh tra.</p>`}</div>`;
   }
   const sc = myScore(), wrong = hasWrong();
   const cards = Object.entries(PERKS).map(([k, p]) => {
     const dis = sc < p.price || (k === "xoa" && !wrong);
-    const why = sc < p.price ? "Không đủ điểm" : (k === "xoa" && !wrong ? "Chưa có câu sai để xóa" : p.desc);
+    const why = sc < p.price ? "Không đủ điểm" : (k === "xoa" && !wrong ? "Bạn chưa sai câu nào" : p.desc);
     return `<button class="perk ${P.sel === k ? "on" : ""}" data-act="sel" data-v="${k}" ${dis ? "disabled" : ""}><div class="row"><b>${esc(p.name)}</b><span class="p">${p.price} điểm</span></div><span>${esc(why)}</span></button>`;
   }).join("");
   return `<div class="center"><h1>Cửa sau đang mở</h1><p class="muted">Quyết định bí mật. Không ai biết… trừ người gác cổng.</p></div>
     <div class="cd" id="cd">–</div>${cards}
     <button class="btn red" data-act="bribe" ${P.sel ? "" : "disabled"}>${P.sel ? "Đưa phong bì " + esc(PERKS[P.sel].name) + " (−" + PERKS[P.sel].price + ")" : "Chọn một phong bì"}</button>
     <button class="btn" data-act="clean">Giữ liêm chính</button>
-    <p class="muted center" style="font-size:13px">Mỗi phong bì làm niềm tin của lớp giảm ${C.trustPerBribe}%.</p>`;
+    <p class="muted center" style="font-size:13px">Mỗi phong bì làm niềm tin của cả lớp giảm.</p>`;
 }
 function bdsum() {
   return `<div class="card center"><h2>Cửa sau đã đóng</h2><p class="muted">Chuẩn bị câu ${P.st.qi + 1}…</p></div>${reportBtn()}`;
@@ -256,7 +272,7 @@ function question() {
   const badges = `${elim ? `<span class="badge">Lộ đề: còn 2 đáp án</span>` : ""} ${doubled ? `<span class="badge">Chạy điểm ×2</span>` : ""}`;
   if (mine) {
     return `<div class="row"><b>Câu ${qi + 1}/${st.total}</b><div class="cd" id="cd">–</div></div>
-      <div class="result neutral"><div class="big shape">${SHAPES[mine.c] || "?"}</div><b>Đã chốt: ${esc(q.o[mine.c] || "")}</b><p class="muted">Chờ các đội khác…</p></div>`;
+      <div class="result neutral"><div class="big shape">${SHAPES[mine.c] || "?"}</div><b>Đã chốt: ${esc(q.o[mine.c] || "")}</b><p class="muted">Chờ mọi người trả lời…</p></div>`;
   }
   return `<div class="row"><b>Câu ${qi + 1}/${st.total}</b><div class="cd" id="cd">–</div></div>
     ${badges.trim() ? `<div>${badges}</div>` : ""}
@@ -268,62 +284,74 @@ function reveal() {
   const correct = st.reveal ? st.q.o[st.reveal.a] : "";
   const box = r && r.ok
     ? `<div class="result ok"><div class="big">Đúng!</div><b>+${r.pts} điểm</b></div>`
-    : `<div class="result no"><div class="big">${mine ? "Sai" : "Hết giờ"}</div><b>${mine ? "Không có điểm" : "Đội chưa trả lời"}</b></div>`;
-  return `${box}<div class="card"><span class="muted">Đáp án đúng</span><b>${esc(correct)}</b>${st.reveal ? `<p class="muted" style="font-size:14px">${esc(st.reveal.e)}</p>` : ""}</div>${reportBtn()}`;
+    : `<div class="result no"><div class="big">${mine ? "Sai" : "Hết giờ"}</div><b>${mine ? "Không có điểm" : "Bạn chưa trả lời"}</b></div>`;
+  return `${box}<div class="card"><span class="muted">Đáp án đúng</span><b>${esc(correct)}</b>${st.reveal ? `<p class="muted" style="font-size:14px">${esc(st.reveal.e)}</p>` : ""}</div>${top5HTML()}${reportBtn()}`;
 }
 function inspect() {
   return `<div class="card center"><h2>Thanh tra chuẩn bị vào cuộc</h2><p>Màn ${P.st.act}: mỗi phong bì có <b>${Math.round((P.st.rate || 0) * 100)}%</b> khả năng bị phát hiện.</p>
-    <p class="muted">Nghi ngờ đội nào? Đây là lúc tố giác.</p></div>
-    ${reportBtn() || (P.report ? `<p class="muted center">Đội đã tố giác ${esc(nameOf(P.report.target))}. Chờ kết quả…</p>` : "")}`;
+    <p class="muted">Bạn nghi ai đã đưa phong bì? Xem bảng xếp hạng: ai tăng điểm bất thường?</p></div>${top5HTML()}${reportBtn()}`;
 }
 function inspres() {
   // Firebase bỏ mảng rỗng, nên luôn đặt mặc định.
-  const I0 = P.st.insp || {}, I = { no: I0.no, caught: I0.caught || [], reports: I0.reports || [] }, id = P.me.id;
-  const mine = I.caught.filter(c => c.team === id);
-  const rep = I.reports.find(r => r.from === id);
+  const I0 = P.st.insp || {}, I = { no: I0.no, caught: I0.caught || [], repN: I0.repN || 0, repOk: I0.repOk || 0 }, id = P.me.id;
+  const mine = I.caught.filter(c => c.p === id);
+  const rr = P.priv.repResult && P.priv.repResult.no === I.no ? P.priv.repResult : null;
   let html = "";
   if (mine.length) {
     const lost = mine.reduce((s, c) => s + c.claw + c.fine, 0);
     html += `<div class="result no"><div class="big">Bị phát hiện</div><b>${mine.map(c => esc(PERKS[c.perk].name)).join(", ")}: −${lost} điểm</b><p class="muted">Thu hồi lợi ích và phạt gấp ${C.fineMultiplier}.</p></div>`;
-  } else html += `<div class="result neutral"><div class="big" style="font-size:28px">Không có tên đội bạn</div><p class="muted">trong biên bản thanh tra số ${I.no || 1}.</p></div>`;
-  if (rep) html += `<div class="result ${rep.ok ? "ok" : "no"}"><b>Tố giác ${esc(nameOf(rep.target))}: ${rep.ok ? "ĐÚNG" : "SAI"} (${signed(rep.d)})</b></div>`;
-  const others = I.caught.filter(c => c.team !== id).map(c => esc(nameOf(c.team)));
-  if (others.length) html += `<p class="muted center">Đội bị phát hiện: ${[...new Set(others)].join(", ")}</p>`;
-  return html + reportBtn();
+  } else html += `<div class="result neutral"><div class="big" style="font-size:28px">Không có tên bạn</div><p class="muted">trong biên bản thanh tra số ${I.no || 1}.</p></div>`;
+  if (rr) html += `<div class="result ${rr.ok ? "ok" : "no"}"><b>Tố giác ${esc(rr.target)}: ${rr.ok ? "ĐÚNG" : "SAI"} (${signed(rr.d)})</b>${rr.capped ? `<p class="muted">Đã có 3 người tố trước bạn nên không có thưởng.</p>` : ""}</div>`;
+  const others = I.caught.filter(c => c.p !== id).map(c => esc(c.name));
+  if (others.length) html += `<p class="muted center">Bị phát hiện: ${[...new Set(others)].slice(0, 8).join(", ")}${others.length > 8 ? "…" : ""}</p>`;
+  return html + top5HTML() + reportBtn();
 }
 function act() {
   return `<div class="card center"><span class="badge red">Màn 2</span><h1>Siết kỷ luật</h1>
     <ul class="small" style="text-align:left"><li>Thanh tra phát hiện ${C.detectRate[1] * 100}% (trước là ${C.detectRate[0] * 100}%).</li><li>Tố giác đúng +${C.reportReward[1]}.</li></ul>
-    <p>Đội bạn còn dám đưa phong bì không?</p></div>${reportBtn()}`;
+    <p>Bạn còn dám đưa phong bì không?</p></div>${reportBtn()}`;
+}
+function endCard(closed) {
+  const F = P.endInfo, me = myInfo();
+  if (!F) return `<div class="result neutral"><b>${closed ? "Phiên chơi đã kết thúc" : "Ván đã kết thúc"}</b></div>`;
+  const titles = [F.clean ? `<span class="badge">Liêm chính +${C.cleanBonus}</span>` : "", F.repOk ? `<span class="badge">Thám tử ×${F.repOk}</span>` : "",
+    F.caught ? `<span class="badge red">Bị phát hiện ×${F.caught}</span>` : ""].filter(Boolean).join(" ");
+  return `<div class="result ${F.rank === 1 ? "ok" : "neutral"}"><span class="muted">Hạng</span><div class="big">${F.rank}/${F.of}</div><b>${F.score} điểm</b></div>
+    <div class="card">
+      <div class="row"><span>Trả lời đúng</span><b>${F.correct}/${F.qDone}</b></div>
+      <div class="row"><span>Phong bì bạn đã đưa</span><b>${F.bribes}</b></div>
+      <div class="row"><span>Bị phát hiện</span><b>${F.caught}</b></div>
+      <div class="row"><span>Tố giác đúng / sai</span><b>${F.repOk} / ${F.repBad}</b></div>
+      ${titles ? `<div>${titles}</div>` : ""}
+    </div>`;
 }
 function end() {
-  const F0 = P.st.final; if (!F0) return lobby();
-  const F = { ...F0, clean: F0.clean || [], ledger: F0.ledger || [] };
-  const id = P.me.id;
-  const arr = Object.entries(P.board).sort((a, b) => b[1].score - a[1].score);
-  const rank = arr.findIndex(x => x[0] === id) + 1;
-  const mine = F.ledger.filter(L => L.team === id);
-  const isClean = F.clean.includes(id);
-  return `<div class="result ${rank === 1 ? "ok" : "neutral"}"><span class="muted">Hạng</span><div class="big">${rank}/${arr.length}</div><b>${myScore()} điểm</b></div>
-    <div class="card">
-      <div class="row"><span>Phong bì đội đã đưa</span><b>${mine.length}</b></div>
-      <div class="row"><span>Bị phát hiện</span><b>${mine.filter(L => L.caught).length}</b></div>
-      <div class="row"><span>Niềm tin của lớp</span><b>${F.trust}%</b></div>
-      ${F.trustFail ? `<p class="muted">Niềm tin dưới ${C.trustLimit}%: mọi đội bị trừ ${C.trustPenaltyRate * 100}%.</p>` : ""}
-      ${isClean ? `<p><span class="badge">Đội liêm chính +${C.cleanBonus}</span></p>` : ""}
-    </div>
-    <p class="center muted">Nhìn lên màn hình chiếu: sự thật được bật mí!</p>`;
+  const F = P.st.final;
+  return endCard(false) + `<div class="card center"><div class="row"><span>Niềm tin của lớp</span><b>${F ? F.trust : P.st.trust}%</b></div>
+    ${F && F.trustFail ? `<p class="muted">Dưới ${C.trustLimit}%: mọi người bị trừ ${C.trustPenaltyRate * 100}% điểm.</p>` : ""}</div>
+    <p class="center muted">Nhìn lên màn hình chiếu: bảng thành tích và sự thật được bật mí!</p>`;
+}
+function closed() {
+  return `<div class="card center"><h1>Phiên chơi đã kết thúc</h1><p class="muted">Cảm ơn bạn đã tham gia. Dữ liệu phòng đã được xóa.</p></div>` + endCard(true);
+}
+
+/* ---------- tố giác ---------- */
+function reportListHTML() {
+  const q = P.search.trim().toLowerCase();
+  const arr = ranked().filter(x => x.id !== P.me.id && (!q || x.name.toLowerCase().includes(q))).sort((a, b) => a.name.localeCompare(b.name));
+  return arr.map(x => `<button class="pick ${P.reportSel === x.id ? "on" : ""}" data-act="rsel" data-v="${x.id}">${esc(x.name)}</button>`).join("") || `<p class="muted">Không tìm thấy.</p>`;
 }
 function openReport() {
-  const others = Object.keys(P.board).filter(id => id !== P.me.id);
   const rw = C.reportReward[(P.st.act || 1) - 1];
   $("#layer").innerHTML = `<div class="modal" data-act="closeModal"><div class="sheet" data-stop="1">
-      <h2>Tố giác đội nào?</h2>
-      <p class="muted" style="font-size:14px">Đúng (đội đó có phong bì chưa bị phát hiện): +${rw}. Sai: −${C.reportFalsePenalty}. Mỗi đội chỉ tố giác 1 lần, xử lý ở lần thanh tra kế tiếp.</p>
-      ${others.map(id => `<button class="pick ${P.reportSel === id ? "on" : ""}" data-act="rsel" data-v="${id}">${esc(nameOf(id))}</button>`).join("")}
-      <button class="btn red" data-act="rsend" ${P.reportSel ? "" : "disabled"}>Gửi đơn tố giác</button>
+      <h2>Tố giác bạn nào?</h2>
+      <p class="muted" style="font-size:14px">Đúng (bạn đó có phong bì chưa bị phát hiện): +${rw}. Sai: −${C.reportFalsePenalty}. Mỗi đợt thanh tra được tố giác 1 lần, xử lý ở lần thanh tra kế tiếp.</p>
+      <input class="field" id="rsearch" placeholder="Tìm tên…" autocomplete="off" value="${esc(P.search)}" aria-label="Tìm tên">
+      <div class="list" id="rlist">${reportListHTML()}</div>
+      <button class="btn red" id="rsend" data-act="rsend" ${P.reportSel ? "" : "disabled"}>Gửi đơn tố giác</button>
       <button class="btn ghost" data-act="closeModal">Hủy</button></div></div>`;
 }
+function refreshReport() { const l = $("#rlist"); if (l) l.innerHTML = reportListHTML(); const b = $("#rsend"); if (b) b.disabled = !P.reportSel; }
 
 /* ---------- đồng hồ ---------- */
 function tick() {
@@ -341,8 +369,7 @@ document.addEventListener("click", async e => {
   if (b.disabled) return;
   const a = b.dataset.act, st = P.st;
   if (a === "room") { const v = ($("#roomIn").value || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (v) { room = v; history.replaceState(null, "", "?room=" + v + (mode === "local" ? "&mode=local" : "")); $("#main").innerHTML = `<p class="muted center">Đang kết nối…</p>`; connect(); } }
-  else if (a === "preset") { P.preset = b.dataset.v; render(); }
-  else if (a === "join") join(($("#nameIn").value || P.preset).trim());
+  else if (a === "join") join($("#nameIn").value);
   else if (a === "sel") { P.sel = b.dataset.v; render(); }
   else if (a === "bribe" && st && st.phase === "backdoor" && P.sel && !P.myBr[st.qi]) {
     P.myBr[st.qi] = { perk: P.sel }; render();
@@ -357,8 +384,8 @@ document.addEventListener("click", async e => {
     if (navigator.vibrate) navigator.vibrate(30);
     await P.store.set("answers/" + st.qi + "/" + P.me.id, { c, at: P.store.now() });
   }
-  else if (a === "report") { P.reportSel = null; openReport(); }
-  else if (a === "rsel") { P.reportSel = b.dataset.v; openReport(); }
+  else if (a === "report") { P.reportSel = null; P.search = ""; openReport(); }
+  else if (a === "rsel") { P.reportSel = b.dataset.v; refreshReport(); }
   else if (a === "rsend" && P.reportSel && !P.report) {
     const target = P.reportSel; $("#layer").innerHTML = "";
     P.report = { target }; render();
@@ -367,6 +394,7 @@ document.addEventListener("click", async e => {
   }
   else if (a === "closeModal") { $("#layer").innerHTML = ""; }
 });
+document.addEventListener("input", e => { if (e.target.id === "rsearch") { P.search = e.target.value; refreshReport(); } });
 document.addEventListener("keydown", e => {
   if (e.key !== "Enter") return;
   if (e.target.id === "nameIn") join(e.target.value);
