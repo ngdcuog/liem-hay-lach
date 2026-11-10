@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liêm hay Lách? · Diễn tập trên 1 máy</title>
+<style>
+html,body{margin:0;height:100%;background:#0b0d19;color:#f6f4ef;font-family:"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{display:grid;grid-template-columns:1fr auto;gap:12px;height:100%;padding:12px;box-sizing:border-box}
+.host{width:100%;height:100%;border:1px solid #313a68;border-radius:12px;background:#0f1222}
+.phones{display:grid;grid-template-columns:repeat(2,300px);grid-auto-rows:calc(50vh - 30px);gap:12px;overflow:auto}
+.ph{display:flex;flex-direction:column;gap:4px}
+.ph span{font-size:12px;color:#a9b1d1}
+.ph iframe{flex:1;width:300px;border:6px solid #23284a;border-radius:22px;background:#0f1222}
+@media(max-width:1100px){.wrap{grid-template-columns:1fr}.phones{grid-template-columns:repeat(4,300px)}}
+</style>
+</head>
+<body>
+<!-- Diễn tập: màn hình MC bên trái, 4 "điện thoại" bên phải, chung một máy, không cần mạng. -->
+<div class="wrap">
+  <iframe class="host" id="host" src="host.html?mode=local&room=TEST&auto=1" title="Màn hình MC"></iframe>
+  <div class="phones">
+    <div class="ph"><span>Điện thoại 1</span><iframe id="p1" title="Điện thoại 1"></iframe></div>
+    <div class="ph"><span>Điện thoại 2</span><iframe id="p2" title="Điện thoại 2"></iframe></div>
+    <div class="ph"><span>Điện thoại 3</span><iframe id="p3" title="Điện thoại 3"></iframe></div>
+    <div class="ph"><span>Điện thoại 4</span><iframe id="p4" title="Điện thoại 4"></iframe></div>
+  </div>
+</div>
+<script>
+// Xóa danh tính cũ của các "điện thoại" để mỗi lần diễn tập vào phòng lại từ đầu, rồi nạp sau khi màn hình MC tạo phòng.
+for (let k = 1; k <= 4; k++) localStorage.removeItem("lhl-me-TEST-" + k);
+setTimeout(() => {
+  for (let k = 1; k <= 4; k++) document.getElementById("p" + k).src = "index.html?mode=local&room=TEST&slot=" + k + "&name=" + encodeURIComponent("Nhóm " + k);
+}, 1200);
+</script>
+</body>
+</html>

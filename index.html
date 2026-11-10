@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1222">
+<title>Liêm hay Lách? · Đội chơi</title>
+<link rel="stylesheet" href="common.css">
+<style>
+body{font-size:16px}
+#app{min-height:100svh;max-width:520px;margin:0 auto;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:rgba(8,10,24,.6);position:sticky;top:0;z-index:5}
+header .nm{font-weight:900;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+header .sc{font-weight:900;font-size:20px}
+header .rk{font-size:12px;color:var(--muted)}
+header .dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none}
+header .dot.off{background:var(--red)}
+.trustline{padding:6px 14px;border-bottom:1px solid var(--line)}
+.trustline .trust{font-size:12px}
+.trustline .tbar{flex:1;width:auto}
+main{flex:1;padding:16px 14px 24px;display:flex;flex-direction:column;gap:14px}
+h1{margin:0;font-size:26px;line-height:1.15}
+h2{margin:0;font-size:20px}
+p{margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:grid;gap:10px}
+.center{text-align:center}
+.big{font-size:44px;font-weight:900;line-height:1}
+.field{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--ink);width:100%;font-size:18px}
+.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.presets button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 4px;font-weight:700;cursor:pointer}
+.presets button.on{border-color:var(--gold);background:rgba(242,181,68,.15)}
+.btn{width:100%;font-size:18px;padding:14px}
+.cd{font-weight:900;font-size:28px;text-align:center}
+.cd.low{color:var(--red)}
+.qt{font-size:17px;font-weight:700;line-height:1.35;background:#fff;color:#141629;border-radius:14px;padding:12px 14px}
+.ans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ans button{border:0;border-radius:14px;min-height:96px;padding:10px;color:#fff;font-weight:800;font-size:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.ans button .shape{font-size:30px;line-height:1}
+.ans button:active{transform:translateY(2px)}
+.ans .o0{background:var(--o0)} .ans .o1{background:var(--o1)} .ans .o2{background:var(--o2)} .ans .o3{background:var(--o3)}
+.ans button.gone{visibility:hidden}
+.badge{display:inline-block;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:800;background:var(--gold);color:#271a03}
+.badge.red{background:var(--red);color:#fff}
+.perk{display:grid;gap:2px;text-align:left;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);border-radius:14px;padding:12px 14px;cursor:pointer;color:var(--ink)}
+.perk b{font-size:18px}
+.perk .p{color:var(--gold);font-weight:900}
+.perk span{color:var(--muted);font-size:13px}
+.perk.on{border-color:var(--gold);background:rgba(242,181,68,.14)}
+.perk[disabled]{opacity:.4;cursor:not-allowed}
+body.night{background:radial-gradient(700px 500px at 50% 0%,#521126 0%,#13070d 75%) fixed}
+body.siren{background:radial-gradient(700px 500px at 50% 0%,#0d3363 0%,#070b16 75%) fixed}
+.result{border-radius:18px;padding:22px 16px;text-align:center;display:grid;gap:6px}
+.result.ok{background:rgba(48,164,108,.2);border:2px solid var(--green)}
+.result.no{background:rgba(229,72,77,.16);border:2px solid var(--red)}
+.result.neutral{background:var(--panel);border:2px solid var(--line)}
+.result .big{font-size:40px}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:min(480px,calc(100% - 24px));background:#fff;color:#141629;border-radius:14px;padding:12px 16px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:20;animation:up .3s}
+.toast.caught{background:var(--red);color:#fff}
+.toast.bribe{background:var(--gold)}
+.toast.good{background:var(--green);color:#fff}
+@keyframes up{from{transform:translate(-50%,20px);opacity:0}}
+.modal{position:fixed;inset:0;background:rgba(5,6,15,.8);display:flex;align-items:flex-end;justify-content:center;z-index:30}
+.sheet{background:var(--bg2);border:1px solid var(--line);border-radius:18px 18px 0 0;padding:16px;width:min(520px,100%);display:grid;gap:10px;max-height:85svh;overflow:auto}
+.pick{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:12px;text-align:left;font-weight:700;cursor:pointer;color:var(--ink)}
+.pick.on{border-color:var(--red);background:rgba(229,72,77,.15)}
+ul.small{margin:0;padding-left:1.1em;color:var(--muted);font-size:14px;display:grid;gap:4px}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+</style>
+<script src="config.js"></script>
+<script src="common.js"></script>
+</head>
+<body>
+<div id="app">
+  <header id="hd" hidden></header>
+  <div class="trustline" id="tl" hidden></div>
+  <main id="main"><p class="muted center">Đang tải…</p></main>
+</div>
+<div id="layer"></div>
+<script>
+(function(){
+"use strict";
+const { CONFIG: C, PERKS, esc, uid, openStore, sfx, signed } = window.LHL;
+const SHAPES = ["▲", "◆", "●", "■"];
+const qp = new URLSearchParams(location.search);
+const mode = qp.get("mode") === "local" ? "local" : "firebase";
+const slot = qp.get("slot") || "";
+let room = (qp.get("room") || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+const $ = s => document.querySelector(s);
+const P = { store: null, me: null, st: null, board: {}, results: {}, priv: {}, myAns: {}, myBr: {}, report: null,
+  conn: true, sub: {}, subQi: -1, sel: null, preset: "", lastNote: 0, joining: false, reportSel: null, lastPhaseKey: "" };
+const meKey = () => "lhl-me-" + room + (slot ? "-" + slot : "");
+
+/* ---------- vào phòng ---------- */
+async function connect() {
+  try { P.store = await openStore(mode, room); }
+  catch (e) { $("#main").innerHTML = `<div class="card"><h2>Không kết nối được</h2><p class="muted">${esc(e.message)}</p></div>`; return; }
+  P.store.onConnection(c => { P.conn = c; paintHeader(); });
+  try { P.me = JSON.parse(localStorage.getItem(meKey())); } catch (e) { P.me = null; }
+  if (!P.me && qp.get("name")) { await join(qp.get("name")); return; }
+  if (P.me) startSubs(); else render();
+}
+async function join(name) {
+  name = String(name || "").trim().slice(0, 20);
+  if (!name || P.joining) return;
+  P.joining = true; sfx.unlock();
+  const me = { id: uid(10), name };
+  await P.store.set("teams/" + me.id, { name, at: P.store.now() });
+  localStorage.setItem(meKey(), JSON.stringify(me));
+  P.me = me; P.joining = false; startSubs();
+}
+function startSubs() {
+  const s = P.store, id = P.me.id;
+  P.sub.state = s.on("state", v => {
+    P.st = v;
+    if (v && v.qi !== P.subQi) resubQ(v.qi);
+    render();
+  });
+  P.sub.board = s.on("board", v => { P.board = v || {}; paintHeader(); if (P.st && P.st.phase === "end") render(); });
+  P.sub.results = s.on("results", v => { P.results = v || {}; if (P.st && (P.st.phase === "reveal" || P.st.phase === "backdoor")) render(); });
+  P.sub.priv = s.on("private/" + id, v => {
+    P.priv = v || {};
+    if (P.priv.kicked) { leaveRoom("MC đã xóa đội khỏi phòng. Hãy chọn lại tên đội."); return; }
+    const n = P.priv.note;
+    if (n && n.at > P.lastNote) { const first = P.lastNote === 0 && n.at < s.now() - 15000; P.lastNote = n.at; if (!first) toast(n.text, n.tone); }
+    if (P.st && P.st.phase === "question") render();
+  });
+  P.sub.report = s.on("reports/" + id, v => { P.report = v; render(); });
+  P.sub.me = s.on("teams/" + id, v => {
+    // MC tạo lại phòng cùng mã: tự vào lại (trừ khi bị MC xóa).
+    if (v === null && P.me && !P.joining) setTimeout(() => {
+      if (P.me && P.me.id === id && !P.priv.kicked) s.set("teams/" + id, { name: P.me.name, at: s.now() });
+    }, 1500);
+  });
+}
+function leaveRoom(msg) {
+  Object.keys(P.sub).forEach(k => { if (P.sub[k]) { try { P.sub[k](); } catch (e) {} P.sub[k] = null; } });
+  localStorage.removeItem(meKey());
+  P.me = null; P.st = null; P.priv = {}; P.subQi = -1; P.myAns = {}; P.myBr = {}; P.report = null; P.preset = "";
+  document.body.className = ""; render(); toast(msg, "warn");
+}
+function resubQ(qi) {
+  ["ans", "br"].forEach(k => { if (P.sub[k]) { try { P.sub[k](); } catch (e) {} } });
+  P.subQi = qi; P.sel = null;
+  if (qi == null || qi < 0) return;
+  P.sub.ans = P.store.on("answers/" + qi + "/" + P.me.id, v => { P.myAns[qi] = v; render(); });
+  P.sub.br = P.store.on("bribes/" + qi + "/" + P.me.id, v => { P.myBr[qi] = v; render(); });
+}
+
+/* ---------- tiện ích ---------- */
+const myScore = () => (P.board[P.me.id] ? P.board[P.me.id].score : C.startScore);
+function myRank() {
+  const arr = Object.entries(P.board).sort((a, b) => b[1].score - a[1].score);
+  const i = arr.findIndex(x => x[0] === P.me.id);
+  return { rank: i + 1, of: arr.length };
+}
+const nameOf = id => (P.board[id] ? P.board[id].name : "?");
+function hasWrong() {
+  const qi = P.st ? P.st.qi : 0;
+  for (let j = qi - 1; j >= 0; j--) { const r = P.results[j] && P.results[j][P.me.id]; if (r && !r.ok) return true; }
+  return false;
+}
+function remaining() { return P.st && P.st.endsAt ? Math.max(0, P.st.endsAt - P.store.now()) : 0; }
+function toast(text, tone) {
+  const t = document.createElement("div"); t.className = "toast " + (tone || ""); t.textContent = text;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 4500);
+  if (navigator.vibrate) navigator.vibrate(tone === "caught" ? [200, 80, 200] : 80);
+}
+
+/* ---------- vẽ ---------- */
+function paintHeader() {
+  const hd = $("#hd"), tl = $("#tl");
+  if (!P.me) { hd.hidden = true; tl.hidden = true; return; }
+  const r = myRank();
+  hd.hidden = false;
+  hd.innerHTML = `<span class="dot ${P.conn ? "" : "off"}" title="${P.conn ? "Đã kết nối" : "Mất kết nối"}"></span>
+    <span class="nm">${esc(P.me.name)}</span>
+    <span class="center"><div class="sc">${myScore()}</div><div class="rk">${r.rank ? "hạng " + r.rank + "/" + r.of : ""}</div></span>`;
+  if (P.st && P.st.phase !== "lobby") {
+    const t = P.st.trust, cls = t >= 70 ? "" : t >= 50 ? "mid" : "low";
+    tl.hidden = false;
+    tl.innerHTML = `<div class="trust ${cls}"><span class="muted">Niềm tin của lớp</span><div class="tbar"><i style="width:${t}%"></i></div><b>${t}%</b></div>`;
+  } else tl.hidden = true;
+}
+function reportBtn() {
+  if (P.report || !P.st || ["lobby", "end", "question", "backdoor"].includes(P.st.phase)) return "";
+  if (Object.keys(P.board).length < 2) return "";
+  const rw = C.reportReward[(P.st.act || 1) - 1];
+  return `<button class="btn ghost" data-act="report">Tố giác một đội (đúng +${rw}, sai −${C.reportFalsePenalty})</button>`;
+}
+function render() {
+  paintHeader();
+  const m = $("#main");
+  if (!room) {
+    m.innerHTML = `<div class="card"><h1>LIÊM <span style="color:var(--gold);font-weight:500">hay</span> LÁCH?</h1>
+      <p class="muted">Nhập mã phòng trên màn hình chiếu.</p>
+      <input class="field" id="roomIn" maxlength="8" autocapitalize="characters" placeholder="VD: KQTR" aria-label="Mã phòng">
+      <button class="btn" data-act="room">Vào</button></div>`;
+    return;
+  }
+  if (!P.me) {
+    const presets = Array.from({ length: 8 }, (_, k) => "Nhóm " + (k + 1));
+    m.innerHTML = `<div class="card"><h1>Phòng ${esc(room)}</h1><p class="muted">Chọn tên đội (mỗi đội dùng 1 điện thoại).</p>
+      <div class="presets">${presets.map(p => `<button data-act="preset" data-v="${p}" class="${P.preset === p ? "on" : ""}">${p}</button>`).join("")}</div>
+      <input class="field" id="nameIn" maxlength="20" placeholder="Hoặc gõ tên đội" value="${esc(P.preset)}" aria-label="Tên đội">
+      <button class="btn" data-act="join">Vào phòng</button></div>`;
+    return;
+  }
+  const st = P.st;
+  document.body.className = st && (st.phase === "backdoor" || st.phase === "bdsum") ? "night" : st && (st.phase === "inspect" || st.phase === "inspres" || st.phase === "act") ? "siren" : "";
+  if (!st) { m.innerHTML = `<div class="card center"><h2>Đã vào phòng ${esc(room)}</h2><p class="muted">Chờ MC tạo ván…</p></div>`; return; }
+  const key = st.phase + ":" + st.qi;
+  if (st.phase === "reveal" && key !== P.lastPhaseKey) {
+    const r = P.results[st.qi] && P.results[st.qi][P.me.id];
+    if (r) { P.lastPhaseKey = key; if (r.ok) sfx.good(); else sfx.bad(); }
+  }
+  m.innerHTML = ({ lobby, backdoor, bdsum, question, reveal, inspect, inspres, act, end }[st.phase] || lobby)();
+  tick();
+}
+function lobby() {
+  return `<div class="card center"><h2>Đã vào phòng ${esc(room)}</h2><p class="big" style="font-size:28px">${esc(P.me.name)}</p><p class="muted">Chờ MC bắt đầu…</p></div>
+    <div class="card"><b>Luật nhanh</b><ul class="small">
+      <li>Trả lời đúng +${C.basePoints}, nhanh thêm tới +${C.speedBonus}.</li>
+      <li>Trước mỗi câu (từ câu 2) có thể bí mật đưa phong bì để lấy lợi thế.</li>
+      <li>Thanh tra có thể phát hiện: thu hồi lợi ích + phạt gấp ${C.fineMultiplier}. Càng đưa nhiều càng dễ lộ.</li>
+      <li>Tố giác đúng được thưởng, sai bị trừ. Mỗi đội 1 lần.</li>
+      <li>Niềm tin của lớp dưới ${C.trustLimit}% khi hết game: mọi đội bị trừ ${C.trustPenaltyRate * 100}%.</li></ul></div>`;
+}
+function backdoor() {
+  const qi = P.st.qi, mine = P.myBr[qi];
+  if (mine) {
+    const p = PERKS[mine.perk];
+    return `<div class="card center"><h2>Cửa sau</h2><div class="cd" id="cd">–</div>
+      ${p ? `<p>Đội đã chọn đưa phong bì <b>${esc(p.name)}</b> (−${p.price}).</p><p class="muted">Giữ bí mật nhé… thanh tra có thể vào cuộc bất cứ lúc nào.</p>`
+          : `<p><b>Đội chọn giữ liêm chính.</b></p><p class="muted">Không mất gì, không sợ thanh tra.</p>`}</div>`;
+  }
+  const sc = myScore(), wrong = hasWrong();
+  const cards = Object.entries(PERKS).map(([k, p]) => {
+    const dis = sc < p.price || (k === "xoa" && !wrong);
+    const why = sc < p.price ? "Không đủ điểm" : (k === "xoa" && !wrong ? "Chưa có câu sai để xóa" : p.desc);
+    return `<button class="perk ${P.sel === k ? "on" : ""}" data-act="sel" data-v="${k}" ${dis ? "disabled" : ""}><div class="row"><b>${esc(p.name)}</b><span class="p">${p.price} điểm</span></div><span>${esc(why)}</span></button>`;
+  }).join("");
+  return `<div class="center"><h1>Cửa sau đang mở</h1><p class="muted">Quyết định bí mật. Không ai biết… trừ người gác cổng.</p></div>
+    <div class="cd" id="cd">–</div>${cards}
+    <button class="btn red" data-act="bribe" ${P.sel ? "" : "disabled"}>${P.sel ? "Đưa phong bì " + esc(PERKS[P.sel].name) + " (−" + PERKS[P.sel].price + ")" : "Chọn một phong bì"}</button>
+    <button class="btn" data-act="clean">Giữ liêm chính</button>
+    <p class="muted center" style="font-size:13px">Mỗi phong bì làm niềm tin của lớp giảm ${C.trustPerBribe}%.</p>`;
+}
+function bdsum() {
+  return `<div class="card center"><h2>Cửa sau đã đóng</h2><p class="muted">Chuẩn bị câu ${P.st.qi + 1}…</p></div>${reportBtn()}`;
+}
+function question() {
+  const st = P.st, qi = st.qi, q = st.q; if (!q) return lobby();
+  const mine = P.myAns[qi];
+  const elim = P.priv.elim && P.priv.elim.qi === qi ? P.priv.elim.keep : null;
+  const br = P.myBr[qi], doubled = br && br.perk === "chay";
+  const badges = `${elim ? `<span class="badge">Lộ đề: còn 2 đáp án</span>` : ""} ${doubled ? `<span class="badge">Chạy điểm ×2</span>` : ""}`;
+  if (mine) {
+    return `<div class="row"><b>Câu ${qi + 1}/${st.total}</b><div class="cd" id="cd">–</div></div>
+      <div class="result neutral"><div class="big shape">${SHAPES[mine.c] || "?"}</div><b>Đã chốt: ${esc(q.o[mine.c] || "")}</b><p class="muted">Chờ các đội khác…</p></div>`;
+  }
+  return `<div class="row"><b>Câu ${qi + 1}/${st.total}</b><div class="cd" id="cd">–</div></div>
+    ${badges.trim() ? `<div>${badges}</div>` : ""}
+    <div class="qt">${esc(q.t)}</div>
+    <div class="ans">${q.o.map((o, i) => `<button class="o${i} ${elim && !elim.includes(i) ? "gone" : ""}" data-act="ans" data-v="${i}" ${elim && !elim.includes(i) ? "disabled aria-hidden=\"true\"" : ""}><span class="shape">${SHAPES[i]}</span><span>${esc(o)}</span></button>`).join("")}</div>`;
+}
+function reveal() {
+  const st = P.st, qi = st.qi, r = P.results[qi] && P.results[qi][P.me.id], mine = P.myAns[qi];
+  const correct = st.reveal ? st.q.o[st.reveal.a] : "";
+  const box = r && r.ok
+    ? `<div class="result ok"><div class="big">Đúng!</div><b>+${r.pts} điểm</b></div>`
+    : `<div class="result no"><div class="big">${mine ? "Sai" : "Hết giờ"}</div><b>${mine ? "Không có điểm" : "Đội chưa trả lời"}</b></div>`;
+  return `${box}<div class="card"><span class="muted">Đáp án đúng</span><b>${esc(correct)}</b>${st.reveal ? `<p class="muted" style="font-size:14px">${esc(st.reveal.e)}</p>` : ""}</div>${reportBtn()}`;
+}
+function inspect() {
+  return `<div class="card center"><h2>Thanh tra chuẩn bị vào cuộc</h2><p>Màn ${P.st.act}: mỗi phong bì có <b>${Math.round((P.st.rate || 0) * 100)}%</b> khả năng bị phát hiện.</p>
+    <p class="muted">Nghi ngờ đội nào? Đây là lúc tố giác.</p></div>
+    ${reportBtn() || (P.report ? `<p class="muted center">Đội đã tố giác ${esc(nameOf(P.report.target))}. Chờ kết quả…</p>` : "")}`;
+}
+function inspres() {
+  // Firebase bỏ mảng rỗng, nên luôn đặt mặc định.
+  const I0 = P.st.insp || {}, I = { no: I0.no, caught: I0.caught || [], reports: I0.reports || [] }, id = P.me.id;
+  const mine = I.caught.filter(c => c.team === id);
+  const rep = I.reports.find(r => r.from === id);
+  let html = "";
+  if (mine.length) {
+    const lost = mine.reduce((s, c) => s + c.claw + c.fine, 0);
+    html += `<div class="result no"><div class="big">Bị phát hiện</div><b>${mine.map(c => esc(PERKS[c.perk].name)).join(", ")}: −${lost} điểm</b><p class="muted">Thu hồi lợi ích và phạt gấp ${C.fineMultiplier}.</p></div>`;
+  } else html += `<div class="result neutral"><div class="big" style="font-size:28px">Không có tên đội bạn</div><p class="muted">trong biên bản thanh tra số ${I.no || 1}.</p></div>`;
+  if (rep) html += `<div class="result ${rep.ok ? "ok" : "no"}"><b>Tố giác ${esc(nameOf(rep.target))}: ${rep.ok ? "ĐÚNG" : "SAI"} (${signed(rep.d)})</b></div>`;
+  const others = I.caught.filter(c => c.team !== id).map(c => esc(nameOf(c.team)));
+  if (others.length) html += `<p class="muted center">Đội bị phát hiện: ${[...new Set(others)].join(", ")}</p>`;
+  return html + reportBtn();
+}
+function act() {
+  return `<div class="card center"><span class="badge red">Màn 2</span><h1>Siết kỷ luật</h1>
+    <ul class="small" style="text-align:left"><li>Thanh tra phát hiện ${C.detectRate[1] * 100}% (trước là ${C.detectRate[0] * 100}%).</li><li>Tố giác đúng +${C.reportReward[1]}.</li></ul>
+    <p>Đội bạn còn dám đưa phong bì không?</p></div>${reportBtn()}`;
+}
+function end() {
+  const F0 = P.st.final; if (!F0) return lobby();
+  const F = { ...F0, clean: F0.clean || [], ledger: F0.ledger || [] };
+  const id = P.me.id;
+  const arr = Object.entries(P.board).sort((a, b) => b[1].score - a[1].score);
+  const rank = arr.findIndex(x => x[0] === id) + 1;
+  const mine = F.ledger.filter(L => L.team === id);
+  const isClean = F.clean.includes(id);
+  return `<div class="result ${rank === 1 ? "ok" : "neutral"}"><span class="muted">Hạng</span><div class="big">${rank}/${arr.length}</div><b>${myScore()} điểm</b></div>
+    <div class="card">
+      <div class="row"><span>Phong bì đội đã đưa</span><b>${mine.length}</b></div>
+      <div class="row"><span>Bị phát hiện</span><b>${mine.filter(L => L.caught).length}</b></div>
+      <div class="row"><span>Niềm tin của lớp</span><b>${F.trust}%</b></div>
+      ${F.trustFail ? `<p class="muted">Niềm tin dưới ${C.trustLimit}%: mọi đội bị trừ ${C.trustPenaltyRate * 100}%.</p>` : ""}
+      ${isClean ? `<p><span class="badge">Đội liêm chính +${C.cleanBonus}</span></p>` : ""}
+    </div>
+    <p class="center muted">Nhìn lên màn hình chiếu: sự thật được bật mí!</p>`;
+}
+function openReport() {
+  const others = Object.keys(P.board).filter(id => id !== P.me.id);
+  const rw = C.reportReward[(P.st.act || 1) - 1];
+  $("#layer").innerHTML = `<div class="modal" data-act="closeModal"><div class="sheet" data-stop="1">
+      <h2>Tố giác đội nào?</h2>
+      <p class="muted" style="font-size:14px">Đúng (đội đó có phong bì chưa bị phát hiện): +${rw}. Sai: −${C.reportFalsePenalty}. Mỗi đội chỉ tố giác 1 lần, xử lý ở lần thanh tra kế tiếp.</p>
+      ${others.map(id => `<button class="pick ${P.reportSel === id ? "on" : ""}" data-act="rsel" data-v="${id}">${esc(nameOf(id))}</button>`).join("")}
+      <button class="btn red" data-act="rsend" ${P.reportSel ? "" : "disabled"}>Gửi đơn tố giác</button>
+      <button class="btn ghost" data-act="closeModal">Hủy</button></div></div>`;
+}
+
+/* ---------- đồng hồ ---------- */
+function tick() {
+  const el = $("#cd"); if (!el || !P.st) return;
+  const s = Math.ceil(remaining() / 1000);
+  el.textContent = s + "s"; el.classList.toggle("low", s <= 5);
+}
+setInterval(tick, 250);
+
+/* ---------- sự kiện ---------- */
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-act]");
+  if (!b) return;
+  if (b.dataset.act === "closeModal" && e.target.closest("[data-stop]") && b.classList.contains("modal")) return;
+  if (b.disabled) return;
+  const a = b.dataset.act, st = P.st;
+  if (a === "room") { const v = ($("#roomIn").value || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (v) { room = v; history.replaceState(null, "", "?room=" + v + (mode === "local" ? "&mode=local" : "")); $("#main").innerHTML = `<p class="muted center">Đang kết nối…</p>`; connect(); } }
+  else if (a === "preset") { P.preset = b.dataset.v; render(); }
+  else if (a === "join") join(($("#nameIn").value || P.preset).trim());
+  else if (a === "sel") { P.sel = b.dataset.v; render(); }
+  else if (a === "bribe" && st && st.phase === "backdoor" && P.sel && !P.myBr[st.qi]) {
+    P.myBr[st.qi] = { perk: P.sel }; render();
+    await P.store.set("bribes/" + st.qi + "/" + P.me.id, { perk: P.sel, at: P.store.now() });
+  }
+  else if (a === "clean" && st && st.phase === "backdoor" && !P.myBr[st.qi]) {
+    P.myBr[st.qi] = { perk: "none" }; render();
+    await P.store.set("bribes/" + st.qi + "/" + P.me.id, { perk: "none", at: P.store.now() });
+  }
+  else if (a === "ans" && st && st.phase === "question" && !P.myAns[st.qi]) {
+    const c = +b.dataset.v; P.myAns[st.qi] = { c }; render();
+    if (navigator.vibrate) navigator.vibrate(30);
+    await P.store.set("answers/" + st.qi + "/" + P.me.id, { c, at: P.store.now() });
+  }
+  else if (a === "report") { P.reportSel = null; openReport(); }
+  else if (a === "rsel") { P.reportSel = b.dataset.v; openReport(); }
+  else if (a === "rsend" && P.reportSel && !P.report) {
+    const target = P.reportSel; $("#layer").innerHTML = "";
+    P.report = { target }; render();
+    await P.store.set("reports/" + P.me.id, { target, at: P.store.now() });
+    toast("Đã gửi đơn tố giác " + nameOf(target) + ". Kết quả có ở lần thanh tra tới.", "info");
+  }
+  else if (a === "closeModal") { $("#layer").innerHTML = ""; }
+});
+document.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  if (e.target.id === "nameIn") join(e.target.value);
+  if (e.target.id === "roomIn") document.querySelector("[data-act='room']").click();
+});
+
+if (room) connect(); else render();
+})();
+</script>
+</body>
+</html>
