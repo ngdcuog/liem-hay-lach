@@ -242,6 +242,8 @@ table.led tr.top td{font-weight:800}
 .bigtrust{font-size:22px;justify-content:center}
 .conf{position:fixed;top:-20px;width:10px;height:16px;z-index:50;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.modal{position:fixed;inset:0;background:rgba(5,6,15,.85);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);padding:16px}
+.modal-box{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:24px 28px;width:min(680px,94vw);max-height:88vh;overflow:auto;display:grid;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.6);color:var(--ink)}
 </style>
 <script src="config.js"></script>
 <script src="common.js"></script>
@@ -254,6 +256,7 @@ table.led tr.top td{font-weight:800}
     <div id="barInfo"></div>
     <div id="trustWrap"></div>
     <div class="tools">
+      <button data-act="rules" title="Xem luật chơi & cơ chế">📖 Luật chơi</button>
       <button class="danger" data-act="endnow" id="endBtn" hidden title="Kết thúc ván ngay và chuyển sang bảng thành tích">Kết thúc ngay</button>
       <button data-act="mute" id="muteBtn" title="Phím M">Âm thanh: bật</button>
       <button data-act="fs" title="Phím F">Toàn màn hình</button>
@@ -262,6 +265,7 @@ table.led tr.top td{font-weight:800}
   <main id="main" aria-live="polite"></main>
   <footer id="board"></footer>
 </div>
+<div id="layer"></div>
 <script>
 (function(){
 "use strict";
@@ -719,6 +723,10 @@ function setupHTML() {
       <h1>LIÊM<br><i>hay</i> LÁCH?</h1>
       <p>Quiz chơi cá nhân về nguyên nhân và tác hại của tham nhũng. Trả lời đúng để kiếm điểm, hoặc lén đi "cửa sau" để lấy lợi thế. Nhưng thanh tra và các bạn khác đang theo dõi.</p>
       <p class="note">Mọi nhân vật trong game là hư cấu. Mục đích: trải nghiệm vì sao "lách" luôn phải trả giá.</p>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn ghost" data-act="rules" style="display:inline-flex;align-items:center;gap:6px">📖 Xem luật chơi</button>
+        <a href="luat_choi.html" target="_blank" class="btn ghost" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none">↗ Mở trang luật riêng</a>
+      </div>
     </section>
     <section class="card">
       <h2>Mở phòng chơi</h2>
@@ -736,6 +744,7 @@ function setupHTML() {
       <button class="btn" data-act="create">Mở phòng <span class="kbd">Enter</span></button>
       ${resumeBtn}
       <div class="note">Diễn tập nhanh trên một máy: mở <a href="thu_nghiem.html">thu_nghiem.html</a> (màn hình MC + 4 điện thoại giả lập).</div>
+      <div class="note" style="margin-top:6px">📖 Cần phổ biến luật trước khi chơi? Mở <a href="luat_choi.html" target="_blank">luat_choi.html</a> (trang luật riêng).</div>
     </section></div>`;
 }
 
@@ -928,14 +937,57 @@ setInterval(() => {
 }, 200);
 
 /* ---------- sự kiện ---------- */
+function openRulesModal() {
+  const l = $("#layer"); if (!l) return;
+  const nVal = (H && H.n) || SET.n || 8;
+  const inspects = (PLAN[nVal] ? PLAN[nVal].inspect : [2, 5, 7]).map(i => i + 1).join(", ");
+  l.innerHTML = `<div class="modal" data-act="closeModal"><div class="modal-box" data-stop="1">
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px">
+      <h2 style="margin:0;font-size:20px;font-weight:900;color:var(--ink)">📖 Luật chơi &amp; Cơ chế: LIÊM hay LÁCH?</h2>
+      <button class="btn ghost" data-act="closeModal" style="flex:none;width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:16px;line-height:1">✕</button>
+    </div>
+    <div style="display:grid;gap:12px;font-size:14.5px;line-height:1.6;color:#d1d6ed">
+      <div>
+        <b style="color:var(--gold)">1. Vốn &amp; Tính điểm:</b> Vốn khởi điểm <b>${C.startScore} điểm</b>. Trả lời đúng <b>+${C.basePoints}</b>, nhanh thêm tối đa <b>+${C.speedBonus}</b>. Sai 0 điểm.
+      </div>
+      <div>
+        <b style="color:var(--gold)">2. "Cửa sau" (từ câu 2, mở ${C.backdoorTime}s):</b> Người chơi bí mật chọn:
+        <ul style="margin:4px 0 0;padding-left:20px">
+          <li><b>Lộ đề (${PERKS.lode.price}đ):</b> ${esc(PERKS.lode.desc)}.</li>
+          <li><b>Chạy điểm (${PERKS.chay.price}đ):</b> ${esc(PERKS.chay.desc)}.</li>
+          <li><b>Xóa án (${PERKS.xoa.price}đ):</b> ${esc(PERKS.xoa.desc)}.</li>
+          <li><b>Giữ liêm chính:</b> 0 điểm, không rủi ro, nhận danh hiệu thưởng cuối ván.</li>
+        </ul>
+      </div>
+      <div>
+        <b style="color:var(--gold)">3. Thanh tra (sau câu ${inspects}):</b>
+        Xác suất lộ cơ sở: ${C.detectRate[0] * 100}% (Màn 1), ${C.detectRate[1] * 100}% (Màn 2). Mỗi phong bì đã đưa trước đó cộng thêm +${C.repeatStep * 100}% nguy cơ (tối đa ${C.detectMax * 100}%).<br>
+        <span style="color:#ff9a9e">⚠️ <b>Bị bắt:</b> Thu hồi toàn bộ lợi ích + phạt gấp ${C.fineMultiplier} lần tiền phong bì + bêu tên công khai.</span>
+      </div>
+      <div>
+        <b style="color:var(--gold)">4. Tố giác:</b> Mỗi đợt thanh tra được tố giác 1 bạn khác. Đúng thưởng <b>+${C.reportReward[0]}</b> (Màn 2: <b>+${C.reportReward[1]}</b>, tối đa ${C.reportCap} người tố đầu tiên). Sai bị trừ <b>-${C.reportFalsePenalty}</b>.
+      </div>
+      <div>
+        <b style="color:var(--gold)">5. Niềm tin của lớp:</b> Mỗi phong bì làm giảm thanh niềm tin. Cuối ván dưới <b>${C.trustLimit}%</b>: <b>cả lớp bị trừ ${C.trustPenaltyRate * 100}% tổng điểm</b>! Ai trong sạch suốt ván: thưởng danh hiệu Liêm chính <b>+${C.cleanBonus} điểm</b>!
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:12px;border-top:1px solid var(--line);flex-wrap:wrap;gap:8px">
+      <a href="luat_choi.html" target="_blank" class="btn ghost" style="text-decoration:none">↗ Mở trang luật riêng</a>
+      <button class="btn" data-act="closeModal">Đã hiểu</button>
+    </div>
+  </div></div>`;
+}
 function toggleMute() { sfx.setMuted(!sfx.isMuted()); $("#muteBtn").textContent = "Âm thanh: " + (sfx.isMuted() ? "tắt" : "bật"); }
 function fs() { const d = document; if (!d.fullscreenElement) { if (d.documentElement.requestFullscreen) d.documentElement.requestFullscreen(); } else if (d.exitFullscreen) d.exitFullscreen(); }
 function resetToSetup() { stopAll(); try { localStorage.removeItem(SAVE_KEY); } catch (e) {} H = null; _sc = null; render(); }
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-act]"); if (!b || b.disabled) return;
+  if (b.dataset.act === "closeModal" && e.target.closest("[data-stop]") && b.classList.contains("modal")) return;
   if (b.tagName === "BUTTON") b.blur();
   const a = b.dataset.act;
-  if (a === "mode") { SET.mode = b.dataset.v; render(); }
+  if (a === "rules") openRulesModal();
+  else if (a === "closeModal") { const l = $("#layer"); if (l) l.innerHTML = ""; }
+  else if (a === "mode") { SET.mode = b.dataset.v; render(); }
   else if (a === "n") { SET.n = +b.dataset.v; render(); }
   else if (a === "qt") { SET.qTime = +b.dataset.v; render(); }
   else if (a === "create") createRoom();

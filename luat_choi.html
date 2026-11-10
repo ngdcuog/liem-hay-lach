@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1222">
+<title>Luật chơi · Liêm hay Lách?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&family=Noto+Serif:wght@700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+<style>
+  :root {
+    --f-ui: "Be Vietnam Pro", "Segoe UI", Roboto, Arial, sans-serif;
+    --f-doc: "Noto Serif", Georgia, "Times New Roman", serif;
+    --f-mono: "Roboto Mono", Consolas, "Courier New", monospace;
+  }
+  body {
+    font-family: var(--f-ui);
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .wrap {
+    width: min(860px, 94vw);
+    margin: 0 auto;
+    padding: 24px 0 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  /* Top Nav */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(8, 10, 24, .75);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .brand {
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: .04em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .brand i {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--gold);
+  }
+  .nav-btns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .nav-btns a, .nav-btns button {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: border-color .2s, background .2s;
+  }
+  .nav-btns a:hover, .nav-btns button:hover {
+    border-color: var(--gold);
+    background: var(--panel2);
+  }
+  .nav-btns a.primary {
+    background: var(--gold);
+    color: #271a03;
+    border-color: #b07f1c;
+  }
+
+  /* Header banner */
+  .hero-rule {
+    background: linear-gradient(135deg, rgba(28,33,64,.8), rgba(22,26,49,.9));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(20px, 4vw, 36px);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-rule::after {
+    content: "LUẬT CHƠI";
+    position: absolute;
+    right: -10px;
+    bottom: -15px;
+    font-family: var(--f-mono);
+    font-size: clamp(48px, 10vw, 84px);
+    font-weight: 900;
+    color: rgba(255, 255, 255, .03);
+    pointer-events: none;
+    letter-spacing: .08em;
+  }
+  .tagline {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(242, 181, 68, .12);
+    border: 1px solid rgba(242, 181, 68, .3);
+    border-radius: 99px;
+    padding: 3px 12px;
+    margin-bottom: 12px;
+  }
+  .hero-rule h1 {
+    margin: 0 0 10px;
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 900;
+    line-height: 1.25;
+  }
+  .hero-rule p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  /* Rules Grid & Cards */
+  .rule-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(16px, 3vw, 24px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+  }
+  .rule-card h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+  }
+  .rule-card h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(242, 181, 68, .2);
+    color: var(--gold);
+    font-family: var(--f-mono);
+    font-size: 14px;
+    font-weight: 900;
+    flex: none;
+  }
+  .rule-content {
+    color: #d1d6ed;
+    font-size: 14.5px;
+    line-height: 1.65;
+  }
+  .rule-content b {
+    color: #fff;
+  }
+  .rule-content ul {
+    margin: 6px 0 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 6px;
+  }
+
+  /* Perk Table */
+  .pk-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 13.5px;
+  }
+  .pk-table th, .pk-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    text-align: left;
+  }
+  .pk-table th {
+    background: var(--panel2);
+    color: var(--muted);
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: .05em;
+  }
+  .pk-table tr:nth-child(even) td {
+    background: rgba(255, 255, 255, .02);
+  }
+  .badge-cost {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(229, 72, 77, .18);
+    color: #ff9a9e;
+    font-family: var(--f-mono);
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* Alert Callouts */
+  .alert-box {
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .alert-box.warn {
+    background: rgba(229, 72, 77, .12);
+    border: 1px solid rgba(229, 72, 77, .35);
+    color: #ffb8b8;
+  }
+  .alert-box.good {
+    background: rgba(48, 164, 108, .12);
+    border: 1px solid rgba(48, 164, 108, .35);
+    color: #a4ecc1;
+  }
+  .alert-box.gold {
+    background: rgba(242, 181, 68, .12);
+    border: 1px solid rgba(242, 181, 68, .35);
+    color: #f7d488;
+  }
+  .alert-box .icon {
+    font-size: 20px;
+    line-height: 1;
+    flex: none;
+  }
+
+  /* Shortcut list */
+  .keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .key-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .kbd {
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: var(--f-mono);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--gold);
+    box-shadow: 0 1px 0 rgba(0,0,0,.4);
+  }
+
+  /* Footer */
+  .foot {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+    padding: 20px 0;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .nav { padding: 10px 14px; }
+    .hero-rule { padding: 18px 14px; }
+    .pk-table { display: block; overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a href="index.html" class="brand">LIÊM <i>hay</i> LÁCH?</a>
+  <div class="nav-btns">
+    <a href="index.html" class="primary">📱 Vào phòng chơi</a>
+    <a href="host.html">💻 Màn hình MC</a>
+    <button onclick="window.print()">🖨️ In / Lưu</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero-rule">
+    <span class="tagline">Hồ sơ hướng dẫn</span>
+    <h1>Luật chơi &amp; Cơ chế tương tác</h1>
+    <p>Quiz tương tác cá nhân mô phỏng các tình huống đấu trí về <b>phòng, chống tham nhũng</b> và <b>liêm chính học đường</b>. Bạn kiếm điểm bằng kiến thức, nhưng cũng có thể lén đi "cửa sau" để lấy lợi thế ngầm. Liệu bạn sẽ chọn giữ mình liêm chính hay mạo hiểm để bị trả giá?</p>
+  </section>
+
+  <!-- 1. Vốn & Điểm -->
+  <article class="rule-card">
+    <h2><span class="num">1</span> Vốn ban đầu &amp; Cách tính điểm</h2>
+    <div class="rule-content">
+      <ul>
+        <li><b>Vốn khởi điểm:</b> Mỗi người chơi được cấp ngay <b>300 điểm</b> khi vào phòng.</li>
+        <li><b>Trả lời đúng:</b> Nhận <b>+100 điểm</b> căn bản.</li>
+        <li><b>Thưởng tốc độ:</b> Trả lời càng nhanh càng được cộng thêm điểm, tối đa lên tới <b>+50 điểm</b>.</li>
+        <li><b>Trả lời sai:</b> Không có điểm (0 điểm), không bị trừ điểm vốn.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- 2. Cửa sau -->
+  <article class="rule-card">
+    <h2><span class="num">2</span> Cơ chế "Cửa sau" — Bí mật đưa phong bì</h2>
+    <div class="rule-content">
+      <p>Từ câu số 2 trở đi, trước mỗi câu hỏi màn hình điện thoại sẽ mở <b>"Cửa sau" trong 12 giây</b>. Bạn có thể bí mật đưa 1 phong bì để mua lợi thế, hoặc chọn <b>Giữ liêm chính</b>:</p>
+      
+      <table class="pk-table">
+        <thead>
+          <tr>
+            <th>Phong bì</th>
+            <th>Chi phí</th>
+            <th>Tác dụng lợi thế</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Lộ đề</b></td>
+            <td><span class="badge-cost">−50 điểm</span></td>
+            <td>Câu kế tiếp hệ thống tự động gạch bỏ 2 đáp án sai, trên điện thoại chỉ còn 2 đáp án để chọn.</td>
+          </tr>
+          <tr>
+            <td><b>Chạy điểm</b></td>
+            <td><span class="badge-cost">−80 điểm</span></td>
+            <td>Nếu câu kế tiếp trả lời đúng, toàn bộ điểm (cả điểm căn bản và thưởng tốc độ) được <b>nhân đôi (x2)</b>.</td>
+          </tr>
+          <tr>
+            <td><b>Xóa án</b></td>
+            <td><span class="badge-cost">−70 điểm</span></td>
+            <td>Sửa câu sai gần nhất của bạn thành đúng (cộng bù lại +100 điểm). <i>Chỉ mua được khi bạn đã từng làm sai ít nhất 1 câu.</i></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="alert-box good" style="margin-top:12px">
+        <span class="icon">🛡️</span>
+        <div><b>Quyền chọn Giữ liêm chính:</b> Không tốn điểm, không để lại vết tích hồ sơ, không bao giờ sợ bị thanh tra xử phạt!</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 3. Thanh tra -->
+  <article class="rule-card">
+    <h2><span class="num">3</span> Thanh tra &amp; Hậu quả khi bị phát hiện</h2>
+    <div class="rule-content">
+      <p>Cơ quan thanh tra sẽ bất ngờ vào cuộc sau các mốc câu hỏi then chốt (sau câu 3, câu 6, câu 8...):</p>
+      <ul>
+        <li><b>Tỉ lệ bị phát hiện cơ sở:</b> Màn 1 là <b>30%</b>; Màn 2 ("Siết kỷ luật") tăng mạnh lên <b>60%</b>.</li>
+        <li><b>Càng tham càng dễ lộ:</b> Mỗi lần bạn đã từng đưa phong bì trong quá khứ sẽ tự động cộng dồn <b>+10% nguy cơ</b> cho các lần thanh tra sau (tối đa tới 90%).</li>
+      </ul>
+
+      <div class="alert-box warn" style="margin-top:10px">
+        <span class="icon">🚨</span>
+        <div>
+          <b>Hình phạt khi bị bắt:</b>
+          <br>1. <b>Thu hồi toàn bộ</b> lợi ích/điểm số kiếm được nhờ phong bì đó.
+          <br>2. <b>Phạt tiền gấp đôi (x2)</b> giá trị phong bì đã đưa.
+          <br>3. Bị bêu tên công khai trên biên bản điều tra máy chiếu trước cả lớp!
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 4. Tố giác -->
+  <article class="rule-card">
+    <h2><span class="num">4</span> Cơ chế Tố giác (Thổi còi)</h2>
+    <div class="rule-content">
+      <ul>
+        <li>Trong mỗi đợt thanh tra, mỗi bạn có quyền bí mật gửi <b>1 đơn tố giác</b> nhắm vào 1 bạn cùng chơi mà bạn nghi ngờ điểm số tăng bất thường do gian lận.</li>
+        <li><b>Tố giác đúng</b> (người bị tố có đưa phong bì mà chưa bị lộ): Bạn được thưởng <b>+100 điểm</b> (Màn 2: <b>+200 điểm</b>). <i>Chỉ 3 người tố giác đầu tiên cùng một đối tượng được nhận thưởng.</i></li>
+        <li><b>Tố giác sai / Vu khống:</b> Bị phạt trừ <b>−50 điểm</b>.</li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- 5. Niềm tin của lớp -->
+  <article class="rule-card">
+    <h2><span class="num">5</span> Thanh "Niềm tin của lớp" &amp; Trách nhiệm chung</h2>
+    <div class="rule-content">
+      <p>Thanh tra và máy chiếu theo dõi sát sao chỉ số niềm tin của tập thể:</p>
+      <ul>
+        <li>Mỗi khi có bạn đưa phong bì, thanh <b>Niềm tin của lớp</b> sẽ bị sụt giảm.</li>
+        <li>Mỗi vụ tiêu cực bị phát hiện và xử lý nghiêm minh, niềm tin sẽ được khôi phục một phần.</li>
+      </ul>
+
+      <div class="alert-box gold" style="margin-top:10px">
+        <span class="icon">⚖️</span>
+        <div>
+          <b>Hậu quả chung cuộc:</b> Nếu đến cuối ván đấu, thanh Niềm tin của lớp tụt xuống dưới <b>50%</b>, thì <b>TOÀN BỘ NGƯỜI CHƠI TRONG LỚP (kể cả người chơi hoàn toàn trong sạch) ĐỀU BỊ TRỪ 20% TỔNG ĐIỂM</b>!
+          <br><small style="color:var(--muted)">→ Thông điệp: Tham nhũng làm xói mòn nền tảng xã hội; khi niềm tin sụp đổ, người trung thực cũng phải chịu hậu quả lây.</small>
+        </div>
+      </div>
+
+      <div class="alert-box good" style="margin-top:10px">
+        <span class="icon">🎖️</span>
+        <div><b>Danh hiệu Liêm chính:</b> Bạn nào kiên định không đưa bất kỳ phong bì nào trong suốt trận đấu sẽ được trao thưởng danh hiệu Liêm chính và nhận ngay <b>+100 điểm thưởng</b> ở lễ tổng kết!</div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 6. Phím tắt MC -->
+  <article class="rule-card">
+    <h2><span class="num">6</span> Phím tắt điều khiển cho MC (Host)</h2>
+    <div class="rule-content">
+      <div class="keys">
+        <div class="key-chip"><span class="kbd">Space</span> / <span class="kbd">Enter</span> Tiếp tục / chuyển câu</div>
+        <div class="key-chip"><span class="kbd">F</span> Toàn màn hình</div>
+        <div class="key-chip"><span class="kbd">M</span> Bật / tắt âm thanh</div>
+      </div>
+    </div>
+  </article>
+
+  <footer class="foot">
+    <p>Trò chơi giáo dục trải nghiệm: <b>LIÊM hay LÁCH?</b></p>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:8px">
+      <a href="index.html" style="color:var(--gold)">Trang người chơi</a> ·
+      <a href="host.html" style="color:var(--gold)">Màn hình MC</a> ·
+      <a href="thu_nghiem.html" style="color:var(--gold)">Diễn tập trên 1 máy</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
