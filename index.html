@@ -5,8 +5,88 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f1222">
 <title>Liêm hay Lách? · Người chơi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&family=Noto+Serif:wght@700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="common.css">
 <style>
+/* ===== Design tokens: "Bàn điều tra" ===== */
+:root{
+  --desk-0:#120e0b; --desk-1:#1c1611; --desk-2:#2a2119; --desk-line:#3d3125;
+  --paper:#f1e6c9; --paper-2:#e4d3a9; --paper-edge:#c9b285; --ink:#1f1a14; --ink-2:#5a4f40;
+  --brass:#d9a441; --brass-2:#9c7020; --cream:#f6efe0; --muted:#bcae94;
+  --stamp-red:#c2352c; --stamp-green:#2e7d4f;
+  --tag-a:#c4463a; --tag-b:#2f6fb7; --tag-c:#c98d1f; --tag-d:#3b8a58;
+  --f-ui:"Be Vietnam Pro","Segoe UI",Roboto,Arial,sans-serif;
+  --f-doc:"Noto Serif",Georgia,"Times New Roman",serif;
+  --f-mono:"Roboto Mono",Consolas,"Courier New",monospace;
+}
+
+body.desk{
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255,214,150,.10), transparent 60%),
+    repeating-linear-gradient(92deg, rgba(255,255,255,.018) 0 2px, transparent 2px 11px),
+    repeating-linear-gradient(88deg, rgba(0,0,0,.18) 0 1px, transparent 1px 23px),
+    linear-gradient(180deg, var(--desk-2), var(--desk-0)) fixed;
+  color:var(--cream);
+  font-family:var(--f-ui);
+}
+body.desk header{background:rgba(0,0,0,.35);border-bottom:1px solid var(--desk-line)}
+body.desk header .nm{color:var(--cream)}
+body.desk header .sc{font-family:var(--f-mono);font-size:20px;color:var(--cream)}
+body.desk header .rk{font-family:var(--f-ui);font-size:12px;color:var(--muted)}
+body.desk .trustline{border-bottom:1px solid var(--desk-line)}
+
+/* Badges Lộ đề / Chạy điểm */
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{font-family:var(--f-mono);font-weight:700;font-size:11px;letter-spacing:.08em;border-radius:6px;padding:4px 8px;background:var(--brass);color:#2a1a04}
+
+/* Hồ sơ câu hỏi trên điện thoại */
+.ph-folder{position:relative;background:linear-gradient(180deg,var(--paper),var(--paper-2));color:var(--ink);border-radius:8px;padding:22px 14px 12px;box-shadow:0 8px 20px rgba(0,0,0,.5);transform:rotate(-.4deg)}
+.ph-folder .tab{position:absolute;top:-14px;left:58px;background:var(--paper-2);font-family:var(--f-mono);font-weight:700;font-size:11px;letter-spacing:.12em;color:var(--ink-2);padding:3px 10px 6px;border-radius:6px 6px 0 0}
+.ph-fuse{position:absolute;left:56px;right:14px;top:9px;height:5px;border-radius:99px;background:rgba(60,40,15,.18)}
+.ph-fuse i{position:absolute;inset:0 auto 0 0;width:calc(var(--p,1)*100%);border-radius:99px;background:linear-gradient(90deg,#8a6a2c,var(--brass) 70%,#ffcf6b);transition:width .2s linear}
+.ph-folder .secs{position:absolute;left:10px;top:-12px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-weight:700;font-size:16px;
+  background:radial-gradient(circle at 35% 30%,#f2c868,var(--brass) 45%,var(--brass-2));color:#2a1a04;box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.ph-folder .secs.low{background:radial-gradient(circle at 35% 30%,#f08070,var(--stamp-red) 50%,#7d1c16);color:#fff}
+.ph-folder p{margin:6px 0 0;font-family:var(--f-doc);font-weight:700;font-size:18px;line-height:1.3;color:var(--ink)}
+
+/* Thẻ tang vật trên điện thoại (xếp 1 cột dọc) */
+.ph-tags{display:grid;gap:12px;padding-top:4px}
+.ptag{position:relative;display:flex;align-items:stretch;min-height:66px;border:0;padding:0;text-align:left;font:inherit;cursor:pointer;
+  background:linear-gradient(180deg,#fbf3df,var(--paper));color:var(--ink);border-radius:8px;box-shadow:0 5px 12px rgba(0,0,0,.45);transform:rotate(var(--r,0deg));transition:transform .12s, filter .2s, opacity .2s}
+.ptag:active:not(:disabled){transform:translateY(2px) rotate(var(--r,0deg))}
+.ptag .band{flex:none;width:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;border-radius:8px 0 0 8px}
+.ptag .band .shape{font-size:22px;line-height:1}
+.ptag .band .letter{font-family:var(--f-mono);font-weight:700;font-size:12px}
+.ptag .txt{flex:1;display:flex;align-items:center;padding:10px 12px;font-weight:700;font-size:15px;line-height:1.3}
+.ptag.t0 .band{background:var(--tag-a)} .ptag.t1 .band{background:var(--tag-b)} .ptag.t2 .band{background:var(--tag-c)} .ptag.t3 .band{background:var(--tag-d)}
+.ptag .st{display:none;position:absolute;right:10px;top:-9px;transform:rotate(-6deg);font-weight:900;font-size:12px;letter-spacing:.1em;border:2.5px solid;border-radius:6px;padding:1px 8px;background:rgba(241,230,201,.95)}
+
+/* Lộ đề: đáp án bị gạch */
+.ptag.cut{filter:grayscale(1);opacity:.45;cursor:not-allowed}
+.ptag.cut .txt{text-decoration:line-through;text-decoration-thickness:2px}
+.ptag.cut .st{display:block;color:var(--ink-2);border-color:var(--ink-2)}
+
+/* Đã nộp */
+.ph-tags.sent .ptag:not(.mine){opacity:.35;filter:grayscale(.7)}
+.ptag.mine .st{display:block;color:var(--stamp-red);border-color:var(--stamp-red)}
+.ptag.mine .st.anim{animation:stampInP .35s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes stampInP{from{transform:rotate(-20deg) scale(2);opacity:0}to{transform:rotate(-6deg) scale(1);opacity:1}}
+.waiting{text-align:center;color:var(--muted);font-size:14px;margin-top:4px}
+
+/* Thẻ kết quả (reveal) */
+.verdictcard{background:linear-gradient(180deg,var(--paper),var(--paper-2));color:var(--ink);border-radius:10px;padding:18px 16px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.5);position:relative}
+.verdictcard .big{display:inline-block;font-weight:900;font-size:28px;letter-spacing:.1em;border-radius:8px;padding:2px 14px;transform:rotate(-6deg)}
+.verdictcard .big.ok{color:var(--stamp-green);border:4px solid var(--stamp-green)}
+.verdictcard .big.no{color:var(--stamp-red);border:4px solid var(--stamp-red)}
+.verdictcard .big.anim{animation:stampInR .38s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes stampInR{from{transform:rotate(-18deg) scale(2);opacity:0}to{transform:rotate(-6deg) scale(1);opacity:1}}
+.verdictcard .pts{display:block;margin-top:10px;font-family:var(--f-mono);font-weight:700;font-size:20px;color:var(--ink)}
+
+.pnote{background:var(--cream);color:var(--ink);border-left:5px solid var(--stamp-red);border-radius:6px;padding:10px 12px;font-size:14px;line-height:1.4}
+.pnote h4{margin:0 0 4px;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--stamp-red)}
+
 body{font-size:16px}
 #app{min-height:100svh;max-width:520px;margin:0 auto;display:flex;flex-direction:column}
 header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:rgba(8,10,24,.6);position:sticky;top:0;z-index:5}
@@ -68,6 +148,10 @@ ul.small{margin:0;padding-left:1.1em;color:var(--muted);font-size:14px;display:g
 .top5 .r.me{background:rgba(242,181,68,.18);font-weight:800}
 .top5 .r b{width:1.6em}
 .top5 .r span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important}
+  .ptag,.ph-folder,.pnote,.verdictcard .big{transform:none !important}
+}
 </style>
 <script src="config.js"></script>
 <script src="common.js"></script>
@@ -90,7 +174,7 @@ const slot = qp.get("slot") || "";
 let room = (qp.get("room") || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 const $ = s => document.querySelector(s);
 const P = { store: null, me: null, st: null, board: {}, results: {}, priv: {}, myAns: {}, myBr: {}, report: null, endInfo: null,
-  conn: true, sub: {}, subQi: -1, sel: null, lastNote: 0, joining: false, reportSel: null, search: "", lastPhaseKey: "" };
+  conn: true, sub: {}, subQi: -1, sel: null, lastNote: 0, joining: false, reportSel: null, search: "", lastPhaseKey: "", animKey: "", stampedAns: {} };
 const meKey = () => "lhl-me-" + room + (slot ? "-" + slot : "");
 
 /* ---------- vào phòng ---------- */
@@ -220,7 +304,13 @@ function render() {
     return;
   }
   const st = P.st;
-  document.body.className = st && (st.phase === "backdoor" || st.phase === "bdsum") ? "night" : st && (st.phase === "inspect" || st.phase === "inspres" || st.phase === "act") ? "siren" : "";
+  document.body.className = st && (st.phase === "backdoor" || st.phase === "bdsum")
+    ? "night"
+    : st && (st.phase === "inspect" || st.phase === "inspres" || st.phase === "act")
+    ? "siren"
+    : st && (st.phase === "question" || st.phase === "reveal")
+    ? "desk"
+    : "";
   if (!st) { m.innerHTML = `<div class="card center"><h2>Đã vào phòng ${esc(room)}</h2><p class="muted">Chờ MC tạo ván…</p></div>`; return; }
   const key = st.phase + ":" + st.qi;
   if (st.phase === "reveal" && key !== P.lastPhaseKey) {
@@ -269,23 +359,66 @@ function question() {
   const mine = P.myAns[qi];
   const elim = P.priv.elim && P.priv.elim.qi === qi ? P.priv.elim.keep : null;
   const br = P.myBr[qi], doubled = br && br.perk === "chay";
-  const badges = `${elim ? `<span class="badge">Lộ đề: còn 2 đáp án</span>` : ""} ${doubled ? `<span class="badge">Chạy điểm ×2</span>` : ""}`;
-  if (mine) {
-    return `<div class="row"><b>Câu ${qi + 1}/${st.total}</b><div class="cd" id="cd">–</div></div>
-      <div class="result neutral"><div class="big shape">${SHAPES[mine.c] || "?"}</div><b>Đã chốt: ${esc(q.o[mine.c] || "")}</b><p class="muted">Chờ mọi người trả lời…</p></div>`;
-  }
-  return `<div class="row"><b>Câu ${qi + 1}/${st.total}</b><div class="cd" id="cd">–</div></div>
-    ${badges.trim() ? `<div>${badges}</div>` : ""}
-    <div class="qt">${esc(q.t)}</div>
-    <div class="ans">${q.o.map((o, i) => `<button class="o${i} ${elim && !elim.includes(i) ? "gone" : ""}" data-act="ans" data-v="${i}" ${elim && !elim.includes(i) ? "disabled aria-hidden=\"true\"" : ""}><span class="shape">${SHAPES[i]}</span><span>${esc(o)}</span></button>`).join("")}</div>`;
+  const qNo = String(qi + 1).padStart(2, "0");
+  const totalNo = String(st.total).padStart(2, "0");
+  const rots = ["-.4deg", ".3deg", "-.2deg", ".4deg"];
+
+  const badges = [];
+  if (elim) badges.push(`<span class="badge">LỘ ĐỀ · CÒN 2 ĐÁP ÁN</span>`);
+  if (doubled) badges.push(`<span class="badge">CHẠY ĐIỂM ×2</span>`);
+
+  const animateStamp = mine && !P.stampedAns[qi];
+  if (mine) P.stampedAns[qi] = true;
+
+  const tags = q.o.map((o, i) => {
+    const isCut = elim && !elim.includes(i);
+    const isMine = mine && mine.c === i;
+    const dis = isCut || !!mine;
+    let stText = "";
+    if (isCut) stText = "ĐÃ BỊ GẠCH";
+    else if (isMine) stText = "ĐÃ NỘP";
+
+    return `<button class="ptag t${i} ${isCut ? "cut" : ""} ${isMine ? "mine" : ""}" data-act="ans" data-v="${i}" ${dis ? "disabled" : ""} style="--r:${rots[i % 4]}">
+      <span class="band"><b class="shape">${SHAPES[i]}</b><b class="letter">${String.fromCharCode(65 + i)}</b></span>
+      <span class="txt">${esc(o)}</span>
+      ${stText ? `<span class="st ${isMine && animateStamp ? "anim" : ""}">${stText}</span>` : ""}
+    </button>`;
+  }).join("");
+
+  return `${badges.length ? `<div class="badges">${badges.join("")}</div>` : ""}
+    <div class="ph-folder">
+      <div class="tab">HỒ SƠ ${qNo} / ${totalNo}</div>
+      <div class="ph-fuse"><i id="pburn"></i></div>
+      <span class="secs" id="psecs">–</span>
+      <p>${esc(q.t)}</p>
+    </div>
+    <div class="ph-tags ${mine ? "sent" : ""}">
+      ${tags}
+    </div>
+    ${mine ? `<p class="waiting">Đã nộp phiếu. Chờ mọi người…</p>` : ""}`;
 }
 function reveal() {
   const st = P.st, qi = st.qi, r = P.results[qi] && P.results[qi][P.me.id], mine = P.myAns[qi];
-  const correct = st.reveal ? st.q.o[st.reveal.a] : "";
-  const box = r && r.ok
-    ? `<div class="result ok"><div class="big">Đúng!</div><b>+${r.pts} điểm</b></div>`
-    : `<div class="result no"><div class="big">${mine ? "Sai" : "Hết giờ"}</div><b>${mine ? "Không có điểm" : "Bạn chưa trả lời"}</b></div>`;
-  return `${box}<div class="card"><span class="muted">Đáp án đúng</span><b>${esc(correct)}</b>${st.reveal ? `<p class="muted" style="font-size:14px">${esc(st.reveal.e)}</p>` : ""}</div>${top5HTML()}${reportBtn()}`;
+  const isOk = r && r.ok;
+  const label = isOk ? "ĐÚNG" : (mine ? "SAI" : "HẾT GIỜ");
+  const ptsTxt = isOk ? `+${r.pts} điểm` : (mine ? "0 điểm" : "Bạn chưa trả lời");
+  const correctLetter = st.reveal ? String.fromCharCode(65 + st.reveal.a) : "";
+  const correctTxt = st.reveal && st.q ? st.q.o[st.reveal.a] : "";
+  const explain = st.reveal ? st.reveal.e : "";
+
+  const animClass = P.animKey !== ("rev:" + qi) ? "anim" : "";
+  P.animKey = "rev:" + qi;
+
+  return `<div class="verdictcard">
+      <span class="big ${isOk ? "ok" : "no"} ${animClass}">${label}</span>
+      <span class="pts">${ptsTxt}</span>
+    </div>
+    <div class="pnote">
+      <h4>KẾT LUẬN ĐIỀU TRA</h4>
+      ${correctLetter ? `<b>Đáp án ${correctLetter}.</b> ${esc(correctTxt)}<br>` : ""}${esc(explain)}
+    </div>
+    ${top5HTML()}
+    ${reportBtn()}`;
 }
 function inspect() {
   return `<div class="card center"><h2>Thanh tra chuẩn bị vào cuộc</h2><p>Màn ${P.st.act}: mỗi phong bì có <b>${Math.round((P.st.rate || 0) * 100)}%</b> khả năng bị phát hiện.</p>
@@ -355,9 +488,26 @@ function refreshReport() { const l = $("#rlist"); if (l) l.innerHTML = reportLis
 
 /* ---------- đồng hồ ---------- */
 function tick() {
-  const el = $("#cd"); if (!el || !P.st) return;
-  const s = Math.ceil(remaining() / 1000);
-  el.textContent = s + "s"; el.classList.toggle("low", s <= 5);
+  if (!P.st) return;
+  const rem = remaining();
+  const s = Math.ceil(rem / 1000);
+
+  const cd = $("#cd");
+  if (cd) {
+    cd.textContent = s + "s";
+    cd.classList.toggle("low", s <= 5);
+  }
+  const secs = $("#psecs");
+  if (secs) {
+    secs.textContent = s;
+    secs.classList.toggle("low", s <= 5);
+  }
+  const pburn = $("#pburn");
+  if (pburn && P.st.endsAt) {
+    const total = (P.st.phase === "question" ? (C.questionTime || 20) : (C.backdoorTime || 12)) * 1000;
+    const ratio = Math.max(0, Math.min(1, rem / total));
+    pburn.style.setProperty("--p", ratio);
+  }
 }
 setInterval(tick, 250);
 

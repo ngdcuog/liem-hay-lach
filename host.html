@@ -4,8 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Liêm hay Lách? · Màn hình MC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&family=Noto+Serif:wght@700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="common.css">
 <style>
+/* ===== Design tokens: "Bàn điều tra" ===== */
+:root{
+  --desk-0:#120e0b; --desk-1:#1c1611; --desk-2:#2a2119; --desk-line:#3d3125;
+  --paper:#f1e6c9; --paper-2:#e4d3a9; --paper-edge:#c9b285; --ink:#1f1a14; --ink-2:#5a4f40;
+  --brass:#d9a441; --brass-2:#9c7020; --cream:#f6efe0; --muted:#bcae94;
+  --stamp-red:#c2352c; --stamp-green:#2e7d4f;
+  --tag-a:#c4463a; --tag-b:#2f6fb7; --tag-c:#c98d1f; --tag-d:#3b8a58;
+  --f-ui:"Be Vietnam Pro","Segoe UI",Roboto,Arial,sans-serif;
+  --f-doc:"Noto Serif",Georgia,"Times New Roman",serif;
+  --f-mono:"Roboto Mono",Consolas,"Courier New",monospace;
+}
 #app{height:100vh;display:grid;grid-template-rows:auto 1fr auto}
 #bar{display:flex;align-items:center;gap:14px;padding:10px 24px;border-bottom:1px solid var(--line);background:rgba(8,10,24,.6)}
 .brand{font-weight:900;font-size:22px;letter-spacing:.04em;white-space:nowrap}
@@ -65,10 +79,7 @@
 table.pk{border-collapse:collapse;width:100%;font-size:15px}
 table.pk td{padding:5px 8px;border-bottom:1px solid var(--line)}
 table.pk td:nth-child(2){color:var(--gold);font-weight:800;white-space:nowrap}
-/* question */
-.qtop{display:flex;align-items:center;gap:12px}
-.qn{font-weight:900;font-size:20px}
-.grow{flex:1}
+/* Timer vòng tròn dùng cho pha Cửa sau (backdoor) */
 .timer{position:relative;width:clamp(62px,11vh,96px);aspect-ratio:1;flex:none}
 .timer svg{width:100%;height:100%;transform:rotate(-90deg)}
 .timer circle{fill:none;stroke-width:9}
@@ -78,19 +89,101 @@ table.pk td:nth-child(2){color:var(--gold);font-weight:800;white-space:nowrap}
 .timer.low .fg{stroke:var(--red)}
 .timer.low .num{color:var(--red)}
 .timer.big{width:clamp(90px,16vh,140px)}
-.qtext{background:#fff;color:#141629;border-radius:var(--radius);padding:clamp(12px,2.6vh,28px) clamp(16px,2.4vw,36px);font-size:clamp(20px,min(2.5vw,4.4vh),42px);font-weight:800;line-height:1.25;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.35)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.6vh,16px)}
-.op{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;border-radius:14px;padding:clamp(8px,1.8vh,20px) 18px;min-height:clamp(56px,10.5vh,108px);font-size:clamp(17px,min(1.9vw,3.3vh),30px);font-weight:800;color:#fff;transition:opacity .3s,transform .3s,box-shadow .3s}
-.op .shape{font-size:1.25em;width:1.4em;text-align:center;flex:none}
-.op.o0{background:var(--o0)} .op.o1{background:var(--o1)} .op.o2{background:var(--o2)} .op.o3{background:var(--o3)}
-.op em{margin-left:auto;font-style:normal;font-size:.8em;background:rgba(0,0,0,.28);border-radius:99px;padding:2px 12px;white-space:nowrap}
-.op .bar{position:absolute;left:0;bottom:0;height:7px;background:rgba(255,255,255,.75);transition:width .6s}
-.grid.rev .op{opacity:.33}
-.grid.rev .op.ok{opacity:1;transform:scale(1.02);box-shadow:0 0 0 4px #fff}
-.explain{background:var(--panel2);border-left:8px solid var(--green);border-radius:12px;padding:10px 18px;font-size:clamp(15px,2.4vh,20px)}
-.explain small{display:block;color:var(--muted);margin-top:4px;font-size:.8em}
-.ctrl{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center}
-.kbd{font-size:12px;opacity:.7;border:1px solid currentColor;border-radius:5px;padding:0 5px;margin-left:6px}
+
+/* ===== BÀN ĐIỀU TRA: MÁY CHIẾU ===== */
+body.desk{
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255,214,150,.10), transparent 60%),
+    repeating-linear-gradient(92deg, rgba(255,255,255,.018) 0 2px, transparent 2px 11px),
+    repeating-linear-gradient(88deg, rgba(0,0,0,.18) 0 1px, transparent 1px 23px),
+    linear-gradient(180deg, var(--desk-2), var(--desk-0)) fixed;
+  color:var(--cream);
+  font-family:var(--f-ui);
+}
+body.desk #bar{background:rgba(0,0,0,.35);border-bottom:1px solid var(--desk-line)}
+body.desk #bar .brand i{color:var(--brass)}
+body.desk #bar .chip{border-color:var(--desk-line);color:var(--muted)}
+body.desk #bar .chip b{color:var(--cream)}
+body.desk #board{background:rgba(0,0,0,.35);border-top:1px solid var(--desk-line)}
+
+.hmain{position:relative;width:100%;max-width:1320px;margin-inline:auto;display:flex;flex-direction:column;justify-content:center;gap:clamp(10px,1.8vh,20px);min-height:0}
+
+/* Hồ sơ vụ việc */
+.folder{position:relative;background:
+    linear-gradient(180deg, rgba(255,255,255,.35), transparent 30%),
+    repeating-linear-gradient(0deg, transparent 0 22px, rgba(90,70,40,.08) 22px 23px),
+    linear-gradient(180deg,var(--paper),var(--paper-2));
+  color:var(--ink);border-radius:8px;padding:clamp(14px,2.2vh,26px) clamp(18px,2.6vw,36px) clamp(10px,1.4vh,16px);transform:rotate(-.5deg);
+  box-shadow:0 clamp(6px,.8vh,12px) clamp(16px,2vh,30px) rgba(0,0,0,.55), inset 0 0 0 1px rgba(0,0,0,.08);
+  animation:folderSlide .3s ease-out;
+}
+@keyframes folderSlide{from{transform:translateY(-12px) rotate(-.5deg);opacity:0}to{transform:translateY(0) rotate(-.5deg);opacity:1}}
+.folder .tab{position:absolute;top:clamp(-20px,-2.2vh,-15px);left:clamp(60px,7.5vw,96px);background:var(--paper-2);color:var(--ink-2);font-family:var(--f-mono);font-weight:700;
+  font-size:clamp(11px,1.3vh,14px);letter-spacing:.14em;padding:clamp(3px,.5vh,5px) clamp(10px,1.2vw,16px) clamp(5px,.7vh,7px);border-radius:6px 6px 0 0;box-shadow:0 -2px 6px rgba(0,0,0,.25)}
+.folder .clip{position:absolute;top:clamp(-12px,-1.4vh,-9px);right:clamp(70px,8vw,110px);width:clamp(14px,1.4vw,20px);height:clamp(36px,4.5vh,48px);border:clamp(2px,.3vw,4px) solid #9aa3ad;border-radius:8px;border-bottom-color:transparent;transform:rotate(8deg);opacity:.9}
+.folder .mat{position:absolute;top:clamp(8px,1.2vh,14px);right:clamp(16px,2vw,28px);font-weight:900;font-size:clamp(11px,1.4vh,15px);letter-spacing:.2em;color:var(--stamp-red);
+  border:clamp(2px,.25vw,3px) solid var(--stamp-red);border-radius:5px;padding:2px clamp(6px,.7vw,10px);transform:rotate(7deg);opacity:.75}
+.folder .qtitle{margin:clamp(4px,.5vh,8px) 0 0;font-family:var(--f-doc);font-weight:700;font-size:clamp(19px,min(2.4vw,4vh),38px);line-height:1.24;max-width:90%;color:var(--ink)}
+.folder .qmeta{display:flex;justify-content:space-between;align-items:center;margin-top:clamp(8px,1.1vh,14px);font-family:var(--f-mono);font-size:clamp(11px,1.3vh,14px);color:var(--ink-2)}
+.folder .qmeta b{color:var(--ink);font-size:1.15em}
+.slips{display:inline-flex;align-items:center;gap:8px}
+.slips i{display:inline-block;width:14px;height:18px;background:#fff8e6;border:1px solid var(--paper-edge);box-shadow:2px 2px 0 #e7d9b6,4px 4px 0 #ddcda4}
+.hint-btn{background:none;border:1px solid rgba(90,70,40,.3);border-radius:6px;font-family:var(--f-mono);font-size:clamp(11px,1.3vh,14px);font-weight:700;color:var(--ink-2);padding:3px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease}
+.hint-btn:hover{border-color:var(--stamp-red);color:var(--ink);background:rgba(255,255,255,.4)}
+
+/* Dây cháy chậm (đồng hồ) */
+.fuse{position:absolute;left:clamp(54px,6.8vw,90px);right:clamp(70px,8vw,110px);top:clamp(7px,1vh,11px);height:clamp(5px,.65vh,8px);border-radius:99px;background:rgba(60,40,15,.18)}
+.fuse .burn{position:absolute;inset:0 auto 0 0;width:calc(var(--p,1)*100%);border-radius:99px;background:linear-gradient(90deg,#8a6a2c,var(--brass) 60%,#f3c76a);transition:width .2s linear}
+.fuse .spark{position:absolute;right:clamp(-8px,-1vh,-6px);top:50%;width:clamp(16px,2vh,22px);height:clamp(16px,2vh,22px);transform:translateY(-50%);border-radius:50%;background:radial-gradient(circle,#fff6c9 0 18%,#ffb43d 30%,rgba(255,120,30,.55) 50%,transparent 70%);animation:flick .18s infinite alternate}
+@keyframes flick{to{transform:translateY(-50%) scale(1.25);filter:brightness(1.3)}}
+.seal{position:absolute;left:clamp(10px,1.6vw,20px);top:clamp(-15px,-1.8vh,-10px);width:clamp(44px,min(4.8vw,7.6vh),68px);height:clamp(44px,min(4.8vw,7.6vh),68px);border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#f2c868,var(--brass) 45%,var(--brass-2));color:#2a1a04;font-family:var(--f-mono);font-weight:700;font-size:clamp(16px,min(1.8vw,3vh),26px);box-shadow:0 3px 8px rgba(0,0,0,.45), inset 0 0 0 3px rgba(255,255,255,.25)}
+body.desk.low .fuse .burn{background:linear-gradient(90deg,#8a2c22,var(--stamp-red))}
+body.desk.low .seal{background:radial-gradient(circle at 35% 30%,#f08070,var(--stamp-red) 50%,#7d1c16);color:#fff;animation:fuseShake .3s infinite alternate}
+@keyframes fuseShake{from{transform:translate(0,0)}to{transform:translate(-1px,1px)}}
+
+/* Thẻ tang vật (đáp án) */
+.tags{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.4vh,16px) clamp(14px,2.2vw,28px);padding:0 6px}
+.tag{position:relative;display:flex;align-items:stretch;min-height:clamp(52px,8.4vh,84px);background:linear-gradient(180deg,#fbf3df,var(--paper));color:var(--ink);border-radius:6px;transform:rotate(var(--r,0deg));box-shadow:0 5px 14px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.07);transition:filter .25s, opacity .25s, transform .25s}
+.tag .band{flex:none;width:clamp(42px,min(5.4vw,8vh),72px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff;border-radius:6px 0 0 6px;position:relative}
+.tag .band .shape{font-size:clamp(18px,min(2vw,3vh),28px);line-height:1}
+.tag .band .letter{font-family:var(--f-mono);font-weight:700;font-size:clamp(11px,1.5vh,15px);opacity:.9}
+.tag .band .hole{position:absolute;top:clamp(5px,.7vh,8px);width:clamp(7px,.9vh,12px);height:clamp(7px,.9vh,12px);border-radius:50%;background:var(--desk-1);box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.t0 .band{background:var(--tag-a)} .t1 .band{background:var(--tag-b)} .t2 .band{background:var(--tag-c)} .t3 .band{background:var(--tag-d)}
+.tag .txt{flex:1;display:flex;align-items:center;padding:clamp(6px,1vh,12px) clamp(12px,1.5vw,20px);font-weight:700;font-size:clamp(15px,min(1.6vw,2.7vh),26px);line-height:1.25}
+.tag .pin{position:absolute;top:clamp(-7px,-.8vh,-5px);left:50%;width:clamp(12px,1.4vh,18px);height:clamp(12px,1.4vh,18px);border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 30%,#ff9a8a,#b8261c 60%,#6e130d);box-shadow:0 2px 4px rgba(0,0,0,.5)}
+.tag .votes{display:none}
+.tag .verdict{display:none}
+
+/* Trạng thái CÔNG BỐ ĐÁP ÁN (reveal) */
+body.desk.revealed .fuse{display:none}
+body.desk.revealed .seal{background:radial-gradient(circle at 35% 30%,#7fd3a0,var(--stamp-green) 55%,#16472c);color:#fff;font-size:clamp(10px,1.4vh,14px);letter-spacing:.05em}
+body.desk.revealed .tag:not(.ok){filter:grayscale(.9) brightness(.8);opacity:.55}
+body.desk.revealed .tag.ok{transform:rotate(0deg) scale(1.03);box-shadow:0 0 0 clamp(2px,.3vw,4px) var(--stamp-green),0 clamp(6px,.8vh,14px) clamp(16px,2vh,30px) rgba(0,0,0,.6)}
+body.desk.revealed .tag .votes{display:flex;position:absolute;left:clamp(42px,min(5.4vw,8vh),72px);right:0;bottom:0;height:clamp(16px,2.2vh,24px);align-items:center;gap:6px;padding:0 clamp(10px,1.4vw,18px);font-family:var(--f-mono);font-size:clamp(10px,1.3vh,13px);color:var(--ink-2);white-space:nowrap}
+body.desk.revealed .tag .votes i{display:block;height:clamp(4px,.5vh,6px);border-radius:99px;background:currentColor;opacity:.55}
+body.desk.revealed .tag .txt{padding-bottom:clamp(18px,2.6vh,28px)}
+body.desk.revealed .tag.ok .verdict{display:block;position:absolute;right:clamp(10px,1.4vw,20px);top:clamp(-16px,-1.8vh,-10px);font-weight:900;font-size:clamp(15px,min(1.5vw,2.5vh),22px);letter-spacing:.12em;color:var(--stamp-green);border:clamp(2px,.3vw,4px) solid var(--stamp-green);border-radius:6px;padding:2px clamp(8px,1vw,14px);background:rgba(241,230,201,.95);transform:rotate(-8deg);animation:stampIn .38s cubic-bezier(.2,1.4,.4,1) .25s both}
+@keyframes stampIn{from{transform:rotate(-18deg) scale(2.1);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+
+/* Biên bản kết luận */
+.note{display:none;background:var(--cream);color:var(--ink);border-left:clamp(5px,.6vw,8px) solid var(--stamp-red);border-radius:6px;padding:clamp(8px,1.2vh,14px) clamp(14px,1.8vw,22px);font-size:clamp(13px,min(1.4vw,2.2vh),18px);line-height:1.35;box-shadow:0 clamp(4px,.5vh,8px) clamp(10px,1.5vh,20px) rgba(0,0,0,.45);transform:rotate(.25deg)}
+.note h4{margin:0 0 3px;font-family:var(--f-mono);font-size:clamp(11px,1.4vh,15px);letter-spacing:.16em;color:var(--stamp-red)}
+.note small{display:block;margin-top:3px;font-family:var(--f-mono);font-size:clamp(10px,1.2vh,13px);color:var(--ink-2)}
+body.desk.revealed .note{display:block;animation:slideUp .35s ease-out .55s both}
+@keyframes slideUp{from{transform:translateY(10px) rotate(.25deg);opacity:0}to{transform:translateY(0) rotate(.25deg);opacity:1}}
+
+/* Bảng tin (pinnote) */
+.pinnote{background:var(--cream);color:var(--ink);border-radius:5px;padding:clamp(3px,.5vh,6px) clamp(8px,1vw,14px);min-width:clamp(80px,9vw,120px);text-align:center;transform:rotate(var(--r,0deg));box-shadow:0 3px 7px rgba(0,0,0,.5)}
+.pinnote .n{font-size:clamp(10px,1.3vh,13px);font-weight:700;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pinnote .s{font-family:var(--f-mono);font-weight:700;font-size:clamp(16px,2.2vh,24px)}
+.pinnote.cnt{background:transparent;color:var(--cream);box-shadow:none;border:1px dashed var(--desk-line)}
+.pinnote.cnt .n{color:var(--muted)}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important}
+  .tag,.folder,.note,.pinnote{transform:none !important}
+  .seal{animation:none !important}
+}
 /* backdoor / inspection */
 body.night{background:radial-gradient(1000px 620px at 50% 0%,#521126 0%,#13070d 70%) fixed}
 body.siren{background:radial-gradient(1000px 620px at 50% 0%,#0d3363 0%,#070b16 70%) fixed}
@@ -548,8 +641,9 @@ function paintBoard() {
   if (!H || H.phase === "lobby" || H.phase === "closed" || (H.phase === "end" && H.endStep >= 1)) { el.innerHTML = ""; return; }
   const sc = scores();
   const arr = pids().map(id => ({ id, name: nameOf(id), s: sc[id] || 0 })).sort((a, b) => b.s - a.s);
-  el.innerHTML = `<div class="tp cnt"><div class="n">Người chơi</div><div class="s">${arr.length}</div></div>` +
-    arr.slice(0, 5).map((t, i) => `<div class="tp"><div class="n">${i + 1}. ${esc(t.name)}</div><div class="s">${t.s}</div></div>`).join("");
+  const rot = ["-1deg", ".8deg", "-.5deg", "1deg", "-.8deg"];
+  el.innerHTML = `<div class="pinnote cnt"><div class="n">Người chơi</div><div class="s">${arr.length}</div></div>` +
+    arr.slice(0, 5).map((t, i) => `<div class="pinnote" style="--r:${rot[i % rot.length]}"><div class="n">${i + 1}. ${esc(t.name)}</div><div class="s">${t.s}</div></div>`).join("");
 }
 function paintPlayers() {
   const el = $("#plist"); if (!el) return false;
@@ -562,20 +656,45 @@ function paintPlayers() {
   return true;
 }
 function timerHTML(big) {
-  return `<div class="timer ${big ? "big" : ""}" id="timer"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="44"/><circle class="fg" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg><div class="num">–</div></div>`;
+  if (big) {
+    return `<div class="timer big" id="timer"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="44"/><circle class="fg" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="0"/></svg><div class="num">–</div></div>`;
+  }
+  return `<div class="fuse" aria-hidden="true"><div class="burn" id="burn"><i class="spark"></i></div></div><div class="seal" id="seal" role="timer" aria-label="Thời gian còn lại">–</div>`;
 }
 function paintTimer(rem, total) {
-  const el = $("#timer"); if (!el) return;
-  const ratio = Math.max(0, Math.min(1, rem / (total * 1000)));
-  el.querySelector(".fg").style.strokeDashoffset = (276.46 * (1 - ratio)).toFixed(1);
-  const sec = Math.ceil(rem / 1000);
-  el.querySelector(".num").textContent = sec;
-  el.classList.toggle("low", sec <= 5);
+  const seal = $("#seal"), burn = $("#burn");
+  if (seal && burn) {
+    if (H && H.phase === "reveal") {
+      seal.textContent = "ĐÃ CHỐT";
+    } else {
+      const ratio = Math.max(0, Math.min(1, rem / (total * 1000)));
+      burn.style.setProperty("--p", ratio);
+      const sec = Math.ceil(rem / 1000);
+      seal.textContent = sec;
+      document.body.classList.toggle("low", sec <= 5);
+    }
+  }
+  const el = $("#timer");
+  if (el) {
+    const ratio = Math.max(0, Math.min(1, rem / (total * 1000)));
+    const fg = el.querySelector(".fg");
+    if (fg) fg.style.strokeDashoffset = (276.46 * (1 - ratio)).toFixed(1);
+    const sec = Math.ceil(rem / 1000);
+    const num = el.querySelector(".num");
+    if (num) num.textContent = sec;
+    el.classList.toggle("low", sec <= 5);
+  }
 }
 const envelopeSVG = `<svg class="env" viewBox="0 0 120 84" aria-hidden="true"><rect x="4" y="10" width="112" height="70" rx="8" fill="#f2e3c4"/><path d="M4 18 L60 52 L116 18" fill="none" stroke="#c9a76a" stroke-width="5"/><circle cx="60" cy="50" r="12" fill="#e5484d"/><text x="60" y="56" text-anchor="middle" font-size="16" font-weight="900" fill="#fff">₫</text></svg>`;
 
 function render() {
-  document.body.className = H && (H.phase === "backdoor" || H.phase === "bdsum") ? "night" : H && (H.phase === "inspect" || H.phase === "inspres" || H.phase === "act") ? "siren" : "";
+  document.body.className = H && (H.phase === "backdoor" || H.phase === "bdsum")
+    ? "night"
+    : H && (H.phase === "inspect" || H.phase === "inspres" || H.phase === "act")
+    ? "siren"
+    : H && (H.phase === "question" || H.phase === "reveal")
+    ? ("desk" + (H.phase === "reveal" ? " revealed" : ""))
+    : "";
   const m = $("#main");
   if (!H) { m.innerHTML = setupHTML(); paintBar(); paintBoard(); return; }
   const f = { lobby: lobbyHTML, question: questionHTML, reveal: questionHTML, backdoor: backdoorHTML, bdsum: bdsumHTML,
@@ -648,14 +767,45 @@ function questionHTML() {
   const ans = H.answers[H.qi] || {};
   const counts = q.o.map((_, i) => ids.filter(id => ans[id] && ans[id].c === i).length);
   const n = ids.filter(id => ans[id]).length, mx = Math.max(1, ...counts);
-  const opts = q.o.map((o, i) => `<div class="op o${i} ${rev && i === q.a ? "ok" : ""}"><span class="shape">${SHAPES[i]}</span><span>${esc(o)}</span>${rev ? `<em>${counts[i]}</em><i class="bar" style="width:${Math.round(counts[i] / mx * 100)}%"></i>` : ""}</div>`).join("");
   const res = H.results[H.qi] || {}, right = Object.values(res).filter(r => r.ok).length;
-  const top = `<div class="qtop"><div class="qn">Câu ${H.qi + 1}/${H.order.length}</div><div class="grow"></div>
-    ${rev ? `<div class="muted"><b>${right}/${ids.length}</b> người trả lời đúng</div>` : `<div class="muted">Đã trả lời: <b id="ansCount">${n}/${ids.length}</b></div>`}
-    ${rev ? "" : timerHTML()}</div>`;
-  const explain = rev ? `<div class="explain">${esc(q.e)}<small>Căn cứ: ${esc(q.s)}</small></div>` : "";
-  const btn = rev ? `<button class="btn" data-act="primary">Tiếp tục <span class="kbd">Space</span></button>` : `<button class="btn ghost" data-act="primary">Chốt đáp án ngay <span class="kbd">Space</span></button>`;
-  return `${top}<div class="qtext">${esc(q.t)}</div><div class="grid ${rev ? "rev" : ""}">${opts}</div>${explain}<div class="ctrl">${btn}</div>`;
+  const qNo = String(H.qi + 1).padStart(2, "0");
+  const totalNo = String(H.order.length).padStart(2, "0");
+  const rots = ["-1deg", ".8deg", ".6deg", "-.9deg"];
+
+  const opts = q.o.map((o, i) => {
+    const isOk = rev && i === q.a;
+    const pct = Math.round(counts[i] / mx * 100);
+    return `<div class="tag t${i} ${isOk ? "ok" : ""}" style="--r:${rots[i % 4]}">
+      <span class="pin"></span>
+      <span class="band"><i class="hole"></i><b class="shape">${SHAPES[i]}</b><b class="letter">${String.fromCharCode(65 + i)}</b></span>
+      <span class="txt">${esc(o)}</span>
+      <span class="votes"><i style="width:${pct}%"></i>${counts[i]} phiếu</span>
+      <span class="verdict">ĐÚNG</span>
+    </div>`;
+  }).join("");
+
+  const folder = `<section class="folder">
+    <div class="tab">HỒ SƠ VỤ VIỆC · SỐ ${qNo} / ${totalNo}</div>
+    <span class="clip" aria-hidden="true"></span>
+    <div class="fuse" aria-hidden="true"><div class="burn" id="burn"><i class="spark"></i></div></div>
+    <div class="seal" id="seal" role="timer" aria-label="Thời gian còn lại">${rev ? "ĐÃ CHỐT" : "–"}</div>
+    <span class="mat" aria-hidden="true">MẬT</span>
+    <h2 class="qtitle">${esc(q.t)}</h2>
+    <div class="qmeta">
+      <span class="slips"><i aria-hidden="true"></i> Phiếu đã nộp <b id="ansCount">${n}/${ids.length}</b></span>
+      <button class="hint-btn" data-act="primary" id="hint">${rev ? "Space: tiếp tục" : "Space: chốt đáp án"}</button>
+    </div>
+  </section>`;
+
+  const tags = `<section class="tags" aria-label="Các đáp án">${opts}</section>`;
+
+  const note = `<aside class="note" aria-live="polite">
+    <h4>KẾT LUẬN ĐIỀU TRA</h4>
+    ${esc(q.e)}
+    <small>Căn cứ: ${esc(q.s)} · ${right}/${ids.length} người trả lời đúng</small>
+  </aside>`;
+
+  return `<div class="hmain">${folder}${tags}${rev ? note : ""}</div>`;
 }
 
 function backdoorHTML() {
