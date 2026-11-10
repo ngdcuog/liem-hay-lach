@@ -1,0 +1,14 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/luat-choi", "destination": "/luat_choi.html" },
+    { "source": "/luat_choi", "destination": "/luat_choi.html" },
+    { "source": "/thu-nghiem", "destination": "/thu_nghiem.html" },
+    { "source": "/thu_nghiem", "destination": "/thu_nghiem.html" },
+    { "source": "/host", "destination": "/host.html" },
+    { "source": "/mc", "destination": "/host.html" },
+    { "source": "/play", "destination": "/index.html" },
+    { "source": "/join", "destination": "/index.html" }
+  ]
+}

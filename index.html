@@ -93,6 +93,7 @@ body.desk .trustline{border-bottom:1px solid var(--desk-line)}
 
 body{font-size:16px}
 #app{min-height:100svh;max-width:520px;margin:0 auto;display:flex;flex-direction:column}
+header[hidden], .trustline[hidden]{display:none !important}
 header{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:rgba(8,10,24,.6);position:sticky;top:0;z-index:5}
 header .nm{font-weight:900;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 header .sc{font-weight:900;font-size:20px}
@@ -155,6 +156,210 @@ ul.small{margin:0;padding-left:1.1em;color:var(--muted);font-size:14px;display:g
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important;transition:none !important}
   .ptag,.ph-folder,.pnote,.verdictcard .big{transform:none !important}
+}
+
+/* ===== Portal / Màn hình bắt đầu của người chơi ===== */
+.entry-wrap{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  margin:auto 0;
+  width:100%;
+}
+.portal-card{
+  width:100%;
+  background:linear-gradient(165deg, rgba(28,34,68,.92) 0%, rgba(18,22,46,.96) 100%);
+  border:1px solid rgba(130,150,230,.25);
+  border-radius:24px;
+  padding:clamp(22px, 5vw, 32px) clamp(16px, 4vw, 24px);
+  box-shadow:0 20px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.12);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  position:relative;
+  overflow:hidden;
+  backdrop-filter:blur(10px);
+}
+.portal-card::before{
+  content:"";
+  position:absolute;
+  top:-50px;
+  right:-50px;
+  width:150px;
+  height:150px;
+  background:radial-gradient(circle, rgba(242,181,68,.15), transparent 70%);
+  pointer-events:none;
+}
+.portal-badge{
+  align-self:flex-start;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--f-mono);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.12em;
+  padding:4px 12px;
+  border-radius:99px;
+  background:rgba(242,181,68,.12);
+  border:1px solid rgba(242,181,68,.3);
+  color:var(--gold);
+}
+.portal-badge.good{
+  background:rgba(48,164,108,.15);
+  border-color:rgba(48,164,108,.4);
+  color:#a4ecc1;
+}
+.dot-pulse{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 0 0 rgba(242,181,68,.7);
+  animation:pulse 2s infinite;
+}
+.dot-pulse.green{
+  background:var(--green);
+  box-shadow:0 0 0 0 rgba(48,164,108,.7);
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(242,181,68,.7)}
+  70%{box-shadow:0 0 0 6px rgba(242,181,68,0)}
+  100%{box-shadow:0 0 0 0 rgba(242,181,68,0)}
+}
+.portal-brand{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.logo-title{
+  font-size:clamp(26px, 6vw, 34px);
+  font-weight:900;
+  letter-spacing:.02em;
+  color:#fff;
+  line-height:1.15;
+}
+.logo-title i{
+  font-style:italic;
+  font-weight:500;
+  color:var(--gold);
+  margin:0 2px;
+}
+.logo-sub{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+}
+.portal-form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.field-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.field-label{
+  font-family:var(--f-mono);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.1em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+.code-input{
+  font-family:var(--f-mono);
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:.3em;
+  text-align:center;
+  text-transform:uppercase;
+  background:rgba(10,13,28,.75);
+  border:2px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  color:#fff;
+  transition:border-color .2s, box-shadow .2s;
+}
+.code-input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(242,181,68,.25);
+  outline:none;
+}
+.name-input{
+  font-size:17px;
+  font-weight:700;
+  background:rgba(10,13,28,.75);
+  border:2px solid var(--line);
+  border-radius:14px;
+  padding:13px 16px;
+  color:#fff;
+  transition:border-color .2s, box-shadow .2s;
+}
+.name-input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(242,181,68,.25);
+  outline:none;
+}
+.gold-btn{
+  background:linear-gradient(180deg, #f7c35f, var(--gold));
+  color:#271a03;
+  border:0;
+  border-radius:14px;
+  padding:14px 20px;
+  font-weight:900;
+  font-size:16px;
+  letter-spacing:.04em;
+  box-shadow:0 4px 0 #b07f1c, 0 8px 20px rgba(242,181,68,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer;
+  transition:filter .15s, transform .1s;
+}
+.gold-btn:hover{filter:brightness(1.06)}
+.gold-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #b07f1c}
+.portal-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-top:2px;
+}
+.action-pill{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:var(--ink);
+  border-radius:99px;
+  padding:7px 14px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition:border-color .2s, background .2s;
+}
+.action-pill:hover{
+  border-color:var(--gold);
+  background:rgba(242,181,68,.1);
+}
+.action-pill.sub{
+  opacity:.8;
+  font-size:12.5px;
+}
+.portal-foot{
+  font-size:12px;
+  color:var(--muted);
+  text-align:center;
+  line-height:1.5;
+  border-top:1px solid rgba(255,255,255,.07);
+  padding-top:12px;
 }
 </style>
 <script src="config.js"></script>
@@ -295,24 +500,81 @@ function render() {
   paintHeader();
   const m = $("#main");
   if (!room) {
-    m.innerHTML = `<div class="card"><h1>LIÊM <span style="color:var(--gold);font-weight:500">hay</span> LÁCH?</h1>
-      <p class="muted">Nhập mã phòng trên màn hình chiếu.</p>
-      <input class="field" id="roomIn" maxlength="8" autocapitalize="characters" placeholder="VD: KQTR" aria-label="Mã phòng">
-      <button class="btn" data-act="room">Vào</button>
-      <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
-        <button class="btn ghost" data-act="rules" style="padding:8px 16px;font-size:13.5px">📖 Xem luật chơi</button>
-        <a href="luat_choi.html" target="_blank" class="btn ghost" style="padding:8px 14px;font-size:13px;text-decoration:none">↗ Trang luật riêng</a>
+    m.innerHTML = `<div class="entry-wrap">
+      <div class="portal-card">
+        <div class="portal-badge">
+          <span class="dot-pulse"></span>
+          <span>HỒ SƠ ĐIỀU TRA · BẢN CÁ NHÂN</span>
+        </div>
+        <div class="portal-brand">
+          <div class="logo-title">LIÊM <i>hay</i> LÁCH?</div>
+          <p class="logo-sub">Đấu trí kiến thức phòng, chống tham nhũng. Bạn chọn giữ mình liêm chính hay lén đi "Cửa sau" để lấy lợi thế?</p>
+        </div>
+        <div class="portal-form">
+          <div class="field-wrap">
+            <label for="roomIn" class="field-label">MÃ PHÒNG (TỪ MÀN HÌNH MÁY CHIẾU)</label>
+            <input class="field code-input" id="roomIn" maxlength="8" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="KQTR" aria-label="Mã phòng">
+          </div>
+          <button class="btn gold-btn" data-act="room">
+            <span>VÀO PHÒNG ĐIỀU TRA</span>
+            <span style="font-size:18px">➔</span>
+          </button>
+        </div>
+        <div class="portal-actions">
+          <button class="action-pill" data-act="rules">
+            <span>📖</span>
+            <span>Xem luật chơi</span>
+          </button>
+          <a href="luat-choi" target="_blank" class="action-pill">
+            <span>↗</span>
+            <span>Trang luật riêng</span>
+          </a>
+          <a href="thu-nghiem" class="action-pill sub">
+            <span>🎮</span>
+            <span>Diễn tập 1 máy</span>
+          </a>
+        </div>
+        <div class="portal-foot">
+          <span>💡 Bạn cũng có thể quét trực tiếp mã QR trên máy chiếu để vào thẳng phòng.</span>
+        </div>
       </div>
     </div>`;
     return;
   }
   if (!P.me) {
-    m.innerHTML = `<div class="card"><h1>Phòng ${esc(room)}</h1><p class="muted">Nhập tên của bạn (người chơi cá nhân). Nên dùng tên thật để các bạn nhận ra.</p>
-      <input class="field" id="nameIn" maxlength="20" placeholder="Tên của bạn" autocomplete="off" aria-label="Tên của bạn">
-      <button class="btn" data-act="join">Vào phòng</button>
-      <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
-        <button class="btn ghost" data-act="rules" style="padding:8px 16px;font-size:13.5px">📖 Xem luật chơi</button>
-        <a href="luat_choi.html" target="_blank" class="btn ghost" style="padding:8px 14px;font-size:13px;text-decoration:none">↗ Trang luật riêng</a>
+    m.innerHTML = `<div class="entry-wrap">
+      <div class="portal-card">
+        <div class="portal-badge good">
+          <span class="dot-pulse green"></span>
+          <span>KẾT NỐI: PHÒNG <b>${esc(room)}</b></span>
+        </div>
+        <div class="portal-brand">
+          <div class="logo-title" style="font-size:25px">THẺ ĐIỀU TRA VIÊN</div>
+          <p class="logo-sub">Nhập họ tên thật của bạn để ghi nhận kết quả và vinh danh trên bảng vàng của lớp.</p>
+        </div>
+        <div class="portal-form">
+          <div class="field-wrap">
+            <label for="nameIn" class="field-label">HỌ VÀ TÊN NGƯỜI CHƠI</label>
+            <input class="field name-input" id="nameIn" maxlength="20" placeholder="VD: Nguyễn Văn A" autocomplete="name" autofocus aria-label="Tên của bạn">
+          </div>
+          <button class="btn gold-btn" data-act="join">
+            <span>XÁC NHẬN VÀO PHÒNG</span>
+            <span style="font-size:18px">➔</span>
+          </button>
+        </div>
+        <div class="portal-actions">
+          <button class="action-pill" data-act="changeRoom">
+            <span>←</span>
+            <span>Đổi mã phòng khác</span>
+          </button>
+          <button class="action-pill" data-act="rules">
+            <span>📖</span>
+            <span>Xem luật chơi</span>
+          </button>
+        </div>
+        <div class="portal-foot">
+          <span>🛡️ Dữ liệu thi đấu chỉ lưu tạm trong phiên học và sẽ tự động xóa sau khi kết thúc.</span>
+        </div>
       </div>
     </div>`;
     return;
@@ -346,7 +608,7 @@ function lobby() {
       <li>Niềm tin của lớp dưới ${C.trustLimit}% khi hết ván: ai cũng bị trừ ${C.trustPenaltyRate * 100}%.</li></ul>
       <div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
         <button class="btn ghost" data-act="rules" style="padding:6px 14px;font-size:13px">📖 Xem chi tiết luật chơi</button>
-        <a href="luat_choi.html" target="_blank" class="btn ghost" style="padding:6px 12px;font-size:12.5px;text-decoration:none">↗ Mở tab riêng</a>
+        <a href="luat-choi" target="_blank" class="btn ghost" style="padding:6px 12px;font-size:12.5px;text-decoration:none">↗ Mở tab riêng</a>
       </div>
     </div>`;
 }
@@ -538,7 +800,7 @@ function openRules() {
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:6px">
-      <a href="luat_choi.html" target="_blank" class="muted" style="font-size:13px;text-decoration:underline">Xem trang đầy đủ ↗</a>
+      <a href="luat-choi" target="_blank" class="muted" style="font-size:13px;text-decoration:underline">Xem trang đầy đủ ↗</a>
       <button class="btn" data-act="closeModal" style="flex:1;max-width:140px">Đã hiểu</button>
     </div>
   </div></div>`;
@@ -577,7 +839,22 @@ document.addEventListener("click", async e => {
   if (b.dataset.act === "closeModal" && e.target.closest("[data-stop]") && b.classList.contains("modal")) return;
   if (b.disabled) return;
   const a = b.dataset.act, st = P.st;
-  if (a === "room") { const v = ($("#roomIn").value || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (v) { room = v; history.replaceState(null, "", "?room=" + v + (mode === "local" ? "&mode=local" : "")); $("#main").innerHTML = `<p class="muted center">Đang kết nối…</p>`; connect(); } }
+  if (a === "room") {
+    const v = ($("#roomIn").value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (v) {
+      room = v;
+      const cleanPath = location.pathname.replace(/\/index\.html$/i, "/") || "./";
+      history.replaceState(null, "", cleanPath + "?room=" + v + (mode === "local" ? "&mode=local" : ""));
+      $("#main").innerHTML = `<p class="muted center">Đang kết nối…</p>`;
+      connect();
+    }
+  }
+  else if (a === "changeRoom") {
+    room = "";
+    const cleanPath = location.pathname.replace(/\/index\.html$/i, "/") || "./";
+    history.replaceState(null, "", cleanPath + (mode === "local" ? "?mode=local" : ""));
+    render();
+  }
   else if (a === "join") join($("#nameIn").value);
   else if (a === "sel") { P.sel = b.dataset.v; render(); }
   else if (a === "bribe" && st && st.phase === "backdoor" && P.sel && !P.myBr[st.qi]) {

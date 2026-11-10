@@ -352,7 +352,9 @@ function fresh(mode, room) {
     endStep: 0, showAll: false, final: null };
 }
 function joinURL() {
-  return new URL("index.html?room=" + H.room + (H.mode === "local" ? "&mode=local" : ""), location.href).href;
+  const isLocalFile = location.protocol === "file:" || location.pathname.endsWith(".html");
+  const base = isLocalFile ? "index.html" : "./";
+  return new URL(base + "?room=" + H.room + (H.mode === "local" ? "&mode=local" : ""), location.href).href;
 }
 function uniqueName(n) {
   const taken = new Set(Object.values(H.players).map(p => p.name.toLowerCase()));
@@ -725,7 +727,7 @@ function setupHTML() {
       <p class="note">Mọi nhân vật trong game là hư cấu. Mục đích: trải nghiệm vì sao "lách" luôn phải trả giá.</p>
       <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
         <button class="btn ghost" data-act="rules" style="display:inline-flex;align-items:center;gap:6px">📖 Xem luật chơi</button>
-        <a href="luat_choi.html" target="_blank" class="btn ghost" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none">↗ Mở trang luật riêng</a>
+        <a href="luat-choi" target="_blank" class="btn ghost" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none">↗ Mở trang luật riêng</a>
       </div>
     </section>
     <section class="card">
@@ -743,8 +745,8 @@ function setupHTML() {
       </div></div>
       <button class="btn" data-act="create">Mở phòng <span class="kbd">Enter</span></button>
       ${resumeBtn}
-      <div class="note">Diễn tập nhanh trên một máy: mở <a href="thu_nghiem.html">thu_nghiem.html</a> (màn hình MC + 4 điện thoại giả lập).</div>
-      <div class="note" style="margin-top:6px">📖 Cần phổ biến luật trước khi chơi? Mở <a href="luat_choi.html" target="_blank">luat_choi.html</a> (trang luật riêng).</div>
+      <div class="note">Diễn tập nhanh trên một máy: mở <a href="thu-nghiem">thu-nghiem</a> (màn hình MC + 4 điện thoại giả lập).</div>
+      <div class="note" style="margin-top:6px">📖 Cần phổ biến luật trước khi chơi? Mở <a href="luat-choi" target="_blank">luat-choi</a> (trang luật riêng).</div>
     </section></div>`;
 }
 
@@ -972,7 +974,7 @@ function openRulesModal() {
       </div>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:12px;border-top:1px solid var(--line);flex-wrap:wrap;gap:8px">
-      <a href="luat_choi.html" target="_blank" class="btn ghost" style="text-decoration:none">↗ Mở trang luật riêng</a>
+      <a href="luat-choi" target="_blank" class="btn ghost" style="text-decoration:none">↗ Mở trang luật riêng</a>
       <button class="btn" data-act="closeModal">Đã hiểu</button>
     </div>
   </div></div>`;
